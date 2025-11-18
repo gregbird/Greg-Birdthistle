@@ -1,5 +1,4 @@
 
-import { GoogleGenAI } from "@google/genai";
 import type { Project, Survey, SurveyTemplate } from './types';
 
 // Declare global variables from CDN scripts
@@ -7,13 +6,14 @@ declare var docx: any;
 declare var saveAs: any;
 declare var Chart: any;
 declare var ChartDataLabels: any;
+declare var GoogleGenAI: any;
 
 // --- Gemini API Service ---
 const API_KEY = process.env.API_KEY;
 if (!API_KEY) {
   console.warn("API_KEY environment variable not set. Gemini API will not function.");
 }
-const ai = new GoogleGenAI({ apiKey: API_KEY });
+const ai = typeof GoogleGenAI !== 'undefined' ? new GoogleGenAI({ apiKey: API_KEY }) : null;
 
 export const generateAiReportContent = async (
   project: Project,
@@ -42,6 +42,9 @@ export const generateAiReportContent = async (
   `;
 
   try {
+    if (!ai) {
+      return "AI service not available. Please configure the Gemini API key.";
+    }
     const response = await ai.models.generateContent({
       model: model,
       contents: fullPrompt,
