@@ -1,18 +1,30 @@
-
 import React from 'react';
 import { assessmentsCsvData, actionsCsvData } from '../constants';
 import { parseCsv, getStatusColorClass } from '../services';
 import type { ViewState } from '../types';
 import { ViewType } from '../types';
 
-const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void }> = ({ setView }) => {
+interface TasksViewProps {
+    setView: (view: ViewState) => void;
+    currentUserRole: 'parent' | 'child';
+}
+
+interface TableProps {
+    setView: (view: ViewState) => void;
+    currentUserRole: 'parent' | 'child';
+}
+
+const AssessmentsTable: React.FC<TableProps> = ({ setView, currentUserRole }) => {
     const assessmentsData = React.useMemo(() => {
         let data = parseCsv(assessmentsCsvData);
         if (!data.some(item => item.SITECODE === '13')) {
             data.push({ SITECODE: '13', SITE_NAME: 'Rossbehy', Status: 'Completed', COUNTY: 'Kerry', HA: '91.71' });
         }
+        if (currentUserRole === 'child') {
+            return data.filter(row => row.COUNTY === 'Cork');
+        }
         return data;
-    }, []);
+    }, [currentUserRole]);
 
     return (
         <div className="bg-surface p-6 rounded-lg shadow-md">
@@ -55,8 +67,14 @@ const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void }> = ({ se
     );
 };
 
-const ActionsTable: React.FC<{ setView: (view: ViewState) => void }> = ({ setView }) => {
-    const actionsData = React.useMemo(() => parseCsv(actionsCsvData), []);
+const ActionsTable: React.FC<TableProps> = ({ setView, currentUserRole }) => {
+    const actionsData = React.useMemo(() => {
+        const data = parseCsv(actionsCsvData);
+        if (currentUserRole === 'child') {
+            return data.filter(row => row.COUNTY === 'Cork');
+        }
+        return data;
+    }, [currentUserRole]);
     return (
         <div className="bg-surface p-6 rounded-lg shadow-md">
             <div className="h-[calc(100vh-18rem)] overflow-y-auto pr-2">
@@ -97,7 +115,7 @@ const ActionsTable: React.FC<{ setView: (view: ViewState) => void }> = ({ setVie
     );
 };
 
-const TasksView: React.FC<{ setView: (view: ViewState) => void }> = ({ setView }) => {
+const TasksView: React.FC<TasksViewProps> = ({ setView, currentUserRole }) => {
     const [activeTab, setActiveTab] = React.useState('assessments');
 
     const tabButtonClass = (tabName: string) =>
@@ -117,8 +135,8 @@ const TasksView: React.FC<{ setView: (view: ViewState) => void }> = ({ setView }
                 </nav>
             </div>
             <div className="mt-6">
-                {activeTab === 'assessments' && <AssessmentsTable setView={setView} />}
-                {activeTab === 'actions' && <ActionsTable setView={setView} />}
+                {activeTab === 'assessments' && <AssessmentsTable setView={setView} currentUserRole={currentUserRole} />}
+                {activeTab === 'actions' && <ActionsTable setView={setView} currentUserRole={currentUserRole} />}
             </div>
         </div>
     );

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import * as Lucide from 'lucide-react';
 import type { ViewState, Project, Survey, TeamMember, ToastState } from './types';
@@ -42,7 +43,12 @@ function useLocalStorage<T,>(key: string, initialValue: T): [T, (value: T) => vo
 }
 
 // --- Sidebar Component ---
-const Sidebar: React.FC<{ setView: (view: ViewState) => void, openTaskTypeModal: () => void }> = ({ setView, openTaskTypeModal }) => {
+const Sidebar: React.FC<{
+  setView: (view: ViewState) => void,
+  openTaskTypeModal: () => void,
+  currentUserRole: 'parent' | 'child',
+  setCurrentUserRole: (role: 'parent' | 'child') => void,
+}> = ({ setView, openTaskTypeModal, currentUserRole, setCurrentUserRole }) => {
   const menuItems = {
     Workspace: [
       { name: 'Dashboard', icon: 'LayoutDashboard', view: ViewType.Dashboard },
@@ -65,19 +71,36 @@ const Sidebar: React.FC<{ setView: (view: ViewState) => void, openTaskTypeModal:
     ]
   };
 
+  const childMenuItems = {
+    Workspace: [
+      { name: 'Dashboard', icon: 'LayoutDashboard', view: ViewType.Dashboard },
+      { name: 'Tasks', icon: 'CheckSquare', view: ViewType.Tasks },
+      { name: 'Surveys', icon: 'Folder', view: ViewType.MySurveys },
+    ],
+    "Desktop Research": menuItems["Desktop Research"],
+    "Field Research": menuItems["Field Research"],
+    Reporting: menuItems.Reporting,
+  };
+
+  const visibleMenuItems = currentUserRole === 'parent' ? menuItems : childMenuItems;
+
   return (
     <aside className="w-64 bg-surface flex flex-col border-r border-gray-200">
       <div className="flex items-center space-x-2 p-4 border-b border-gray-200">
           <Lucide.Globe className="w-7 h-7 text-secondary" />
           <h1 className="text-2xl font-bold text-secondary">Dulra</h1>
       </div>
-      <nav className="p-4 flex-1">
-          <button onClick={openTaskTypeModal} className="w-full bg-primary text-secondary py-2.5 px-4 rounded-md hover:brightness-95 flex items-center space-x-2 justify-center text-sm font-semibold">
-              <Lucide.PlusCircle className="w-5 h-5" />
-              <span>Create a Site Task</span>
-          </button>
-          {Object.entries(menuItems).map(([category, items]) => (
-            <div key={category} className="mt-6">
+      
+      <nav className="p-4 flex-1 overflow-y-auto">
+          {currentUserRole === 'parent' && (
+            <button onClick={openTaskTypeModal} className="w-full bg-primary text-secondary py-2.5 px-4 rounded-md hover:brightness-95 flex items-center space-x-2 justify-center text-sm font-semibold mb-6">
+                <Lucide.PlusCircle className="w-5 h-5" />
+                <span>Create a Site Task</span>
+            </button>
+          )}
+
+          {Object.entries(visibleMenuItems).map(([category, items]) => (
+            <div key={category} className="mb-4 last:mb-0">
                 <h3 className="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{category}</h3>
                 <div className="mt-2 space-y-1">
                     {items.map(item => {
@@ -92,7 +115,9 @@ const Sidebar: React.FC<{ setView: (view: ViewState) => void, openTaskTypeModal:
                 </div>
             </div>
           ))}
-           <div className="mt-6">
+           
+           {currentUserRole === 'parent' && (
+             <div className="mt-4">
                 <h3 className="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Configuration</h3>
                 <div className="mt-2 space-y-1">
                     <button onClick={() => setView({ view: ViewType.Settings })} className="w-full text-left flex items-center space-x-2 py-2 px-2 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900">
@@ -101,7 +126,21 @@ const Sidebar: React.FC<{ setView: (view: ViewState) => void, openTaskTypeModal:
                     </button>
                 </div>
             </div>
+           )}
       </nav>
+
+      {/* User Role Switcher */}
+      <div className="p-4 border-t border-gray-200">
+          <label htmlFor="user-role-switcher" className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Demonstration View</label>
+          <div className="flex rounded-md shadow-sm">
+              <button onClick={() => setCurrentUserRole('parent')} className={`w-1/2 px-2 py-1 text-xs font-medium rounded-l-md transition-colors ${currentUserRole === 'parent' ? 'bg-accent text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                  Parent (Admin)
+              </button>
+              <button onClick={() => setCurrentUserRole('child')} className={`w-1/2 px-2 py-1 text-xs font-medium rounded-r-md transition-colors ${currentUserRole === 'child' ? 'bg-accent text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                  Child (User)
+              </button>
+          </div>
+      </div>
     </aside>
   );
 };
@@ -128,10 +167,19 @@ const Toast: React.FC<{ toast: ToastState, hide: () => void }> = ({ toast, hide 
     );
 };
 
+const PermissionDenied: React.FC = () => (
+    <div className="p-4 md:p-8 text-center">
+        <Lucide.Lock className="w-16 h-16 text-status-bad mx-auto mb-4" />
+        <h2 className="text-3xl font-bold text-secondary">Access Denied</h2>
+        <p className="text-gray-500 mt-2">You do not have permission to view this page. Please switch to the Parent (Admin) view.</p>
+    </div>
+);
+
 const App: React.FC = () => {
   const [db, setDb] = useLocalStorage('dulraDb', defaultDb);
   const [viewState, setViewState] = useState<ViewState>({ view: ViewType.Dashboard });
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
+  const [currentUserRole, setCurrentUserRole] = useLocalStorage<'parent' | 'child'>('dulraUserRole', 'parent');
   
   // Modal States
   const [newSurveyModal, setNewSurveyModal] = useState<{show: boolean, templateId: string | null}>({show: false, templateId: null});
@@ -187,13 +235,24 @@ const App: React.FC = () => {
     }
   };
 
+  // Filter data based on user role
+  const childUser = "Cian O'Donnell";
+  const visibleSurveys = currentUserRole === 'child'
+      ? db.surveys.filter(s => s.assignedTo?.includes(childUser))
+      : db.surveys;
+  const visibleProjectIds = [...new Set(visibleSurveys.map(s => s.projectId))];
+  const visibleProjects = currentUserRole === 'child'
+      ? db.projects.filter(p => visibleProjectIds.includes(p.id))
+      : db.projects;
+
+
   const renderView = () => {
     switch (viewState.view) {
-      case ViewType.Dashboard: return <DashboardView setView={setView}/>;
-      case ViewType.Projects: return <ProjectsView />;
-      case ViewType.Tasks: return <TasksView setView={setView}/>;
-      case ViewType.Settings: return <SettingsView />;
-      case ViewType.Team: return <TeamView team={db.team} openThirdPartyModal={() => setThirdPartyModal({show: true, link: null})}/>;
+      case ViewType.Dashboard: return <DashboardView setView={setView} currentUserRole={currentUserRole}/>;
+      case ViewType.Projects: return currentUserRole === 'parent' ? <ProjectsView /> : <PermissionDenied />;
+      case ViewType.Tasks: return <TasksView setView={setView} currentUserRole={currentUserRole}/>;
+      case ViewType.Settings: return currentUserRole === 'parent' ? <SettingsView /> : <PermissionDenied />;
+      case ViewType.Team: return currentUserRole === 'parent' ? <TeamView team={db.team} openThirdPartyModal={() => setThirdPartyModal({show: true, link: null})}/> : <PermissionDenied />;
       case ViewType.FieldSurvey: return <FieldSurveyView projects={db.projects} teamMembers={db.team} showToast={showToast} />;
       case ViewType.Impact: return <ImpactCalculationView />;
       case ViewType.MySurveys:
@@ -202,8 +261,8 @@ const App: React.FC = () => {
         return <SurveysView 
             viewState={viewState}
             setView={setView}
-            projects={db.projects}
-            surveys={db.surveys}
+            projects={visibleProjects}
+            surveys={visibleSurveys}
             openNewSurveyModal={(templateId) => setNewSurveyModal({show: true, templateId})}
             openAssignSurveyModal={(surveyId) => setAssignSurveyModal({show: true, surveyId})}
           />;
@@ -218,14 +277,14 @@ const App: React.FC = () => {
         return <ToolsView 
           viewState={viewState} 
           setView={setView} 
-          projects={db.projects}
-          surveys={db.surveys}
+          projects={visibleProjects}
+          surveys={visibleSurveys}
         />;
       case ViewType.AssessmentDetail: return <AssessmentDetailView setView={setView} param={viewState.param}/>;
       case ViewType.ActionDetail: return <ActionDetailView setView={setView} />;
       case ViewType.CreateAction: return <CreateActionView setView={setView} showToast={showToast} />;
       case ViewType.SurveyForm: return null; // Handled separately
-      default: return <DashboardView setView={setView}/>;
+      default: return <DashboardView setView={setView} currentUserRole={currentUserRole}/>;
     }
   };
 
@@ -235,7 +294,12 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-background">
-      <Sidebar setView={setView} openTaskTypeModal={() => setIsTaskTypeModalOpen(true)} />
+      <Sidebar 
+        setView={setView} 
+        openTaskTypeModal={() => setIsTaskTypeModalOpen(true)} 
+        currentUserRole={currentUserRole}
+        setCurrentUserRole={setCurrentUserRole}
+      />
       <main ref={mainContentRef} className="flex-1 overflow-y-auto">
         {renderView()}
       </main>

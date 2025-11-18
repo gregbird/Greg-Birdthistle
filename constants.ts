@@ -1,15 +1,15 @@
 import type { SurveyTemplate, TeamMember, Survey, Project, ActionCategory, SFA_HabitatAssessmentRules } from './types';
 
 export const surveyTemplates: SurveyTemplate[] = [
-    { id: "PEA", name: "Preliminary Ecological Appraisal", description: "A baseline ecological assessment.", icon: "ClipboardList" },
-    { id: "EcIA", name: "Ecological Impact Assessment", description: "Assess potential project impacts.", icon: "AlertTriangle" },
-    { id: "NIS", name: "Natura Impact Statement", description: "For projects affecting Natura 2000 sites.", icon: "ShieldCheck" },
-    { id: "AA", name: "Appropriate Assessment Screening", description: "Initial screening for AA.", icon: "Search" },
-    { id: "Bat", name: "Bat Survey", description: "Surveys for bat activity and roosts.", icon: "Moon" },
-    { id: "Bird", name: "Bird Survey", description: "Various methods for avian populations.", icon: "Bird" },
-    { id: "Habitat", name: "Habitat & Botanical Survey", description: "Mapping and assessing habitats.", icon: "Leaf" },
-    { id: "Invasive", name: "Invasive Species Survey", description: "Mapping and management plans.", icon: "Bug" },
-    { id: "ECoW", name: "ECoW Report", description: "Ecological Clerk of Works monitoring.", icon: "UserCheck" }
+    { id: "PEA", name: "Preliminary Ecological Appraisal", description: "Phase 1 Habitat Survey to provide a baseline ecological assessment of a site, identifying key habitats and potential constraints.", icon: "ClipboardList" },
+    { id: "EcIA", name: "Ecological Impact Assessment", description: "A comprehensive assessment to identify, quantify, and evaluate the potential impacts of a proposed project on ecosystems.", icon: "AlertTriangle" },
+    { id: "NIS", name: "Natura Impact Statement", description: "A detailed report required for any plan or project that may affect a Natura 2000 site (SAC or SPA).", icon: "ShieldCheck" },
+    { id: "AA", name: "Appropriate Assessment Screening", description: "Stage 1 screening report to determine if a plan or project is likely to have significant effects on a Natura 2000 site.", icon: "Search" },
+    { id: "Bat", name: "Bat Survey", description: "Includes preliminary roost assessments, dusk emergence/dawn re-entry surveys, and activity transects for bats.", icon: "Moon" },
+    { id: "Bird", name: "Bird Survey", description: "Customisable surveys for breeding birds (BBS), wintering birds (WeBS), and vantage point surveys for specific species.", icon: "Bird" },
+    { id: "Habitat", name: "Habitat & Botanical Survey", description: "Detailed botanical surveys including quadrat analysis, vegetation mapping (Fossitt), and Annex I habitat assessment.", icon: "Leaf" },
+    { id: "Invasive", name: "Invasive Species Survey", description: "Identifies and maps non-native invasive species, providing management recommendations in line with regulations.", icon: "Bug" },
+    { id: "ECoW", name: "ECoW Report", description: "Provides a template for Ecological Clerk of Works (ECoW) site monitoring reports to ensure environmental compliance.", icon: "UserCheck" }
 ];
 
 export const defaultDb: { projects: Project[]; surveys: Survey[]; team: TeamMember[] } = {
@@ -19,12 +19,32 @@ export const defaultDb: { projects: Project[]; surveys: Survey[]; team: TeamMemb
     ],
     surveys: [
         { id: 101, projectId: 1, siteName: "Site A - Woodland", template: "PEA", status: "Completed", data: { habitat: "WD1 - Oak-birch-holly woodland", notes: "Mature oak canopy, limited undergrowth.", species: "Sciurus vulgaris (Red Squirrel)", photo: "https://placehold.co/600x400/a3e635/ffffff?text=Woodland+Canopy" } },
-        { id: 102, projectId: 1, siteName: "Site B - River Crossing", template: "EcIA", status: "In Progress", data: {} },
+        { id: 102, projectId: 1, siteName: "Site B - River Crossing", template: "EcIA", status: "In Progress", data: {}, assignedTo: ["Cian O'Donnell"] },
     ],
     team: [
-        { name: "Dr. Aoife Murphy", email: "aoife.murphy@dulra.ie", role: "Principal Ecologist" },
-        { name: "Cian O'Donnell", email: "cian.odonnell@dulra.ie", role: "Field Ecologist" },
-        { name: "Siobhán Kelly", email: "siobhan.kelly@dulra.ie", role: "GIS Specialist" }
+        { name: "Dr. Aoife Murphy", email: "aoife.murphy@dulra.ie", role: "Principal Ecologist", actionsCount: 5 },
+        { name: "Cian O'Donnell", email: "cian.odonnell@dulra.ie", role: "Field Ecologist", actionsCount: 12 },
+        { name: "Siobhán Kelly", email: "siobhan.kelly@dulra.ie", role: "GIS Specialist", actionsCount: 3 },
+        { name: "Liam Byrne", email: "liam.byrne@dulra.ie", role: "Senior Ecologist", actionsCount: 8 },
+        { name: "Niamh Walsh", email: "niamh.walsh@dulra.ie", role: "Project Manager", actionsCount: 2 },
+        { name: "Conor Ryan", email: "conor.ryan@dulra.ie", role: "Graduate Ecologist", actionsCount: 15 },
+        { name: "Aoife Doyle", email: "aoife.doyle@dulra.ie", role: "Ornithologist", actionsCount: 7 },
+        { name: "Sean McCarthy", email: "sean.mccarthy@dulra.ie", role: "Field Ecologist", actionsCount: 11 },
+        { name: "Fionnuala Gallagher", email: "fionnuala.gallagher@dulra.ie", role: "Botanist", actionsCount: 4 },
+        { name: "Eoin Brennan", email: "eoin.brennan@dulra.ie", role: "GIS Specialist", actionsCount: 6 },
+        { name: "Ciara Moore", email: "ciara.moore@dulra.ie", role: "Data Analyst", actionsCount: 1 },
+        { name: "Padraig O'Connor", email: "padraig.oconnor@dulra.ie", role: "Senior Ecologist", actionsCount: 9 },
+        { name: "Roisin Farrell", email: "roisin.farrell@dulra.ie", role: "Field Ecologist", actionsCount: 14 },
+        { name: "Darragh Quinn", email: "darragh.quinn@dulra.ie", role: "Graduate Ecologist", actionsCount: 18 },
+        { name: "Aisling Fitzgerald", email: "aisling.fitzgerald@dulra.ie", role: "Principal Ecologist", actionsCount: 3 },
+        { name: "Tadhg Kennedy", email: "tadhg.kennedy@dulra.ie", role: "Ornithologist", actionsCount: 6 },
+        { name: "Orla Murray", email: "orla.murray@dulra.ie", role: "GIS Specialist", actionsCount: 5 },
+        { name: "Shane Power", email: "shane.power@dulra.ie", role: "Project Manager", actionsCount: 1 },
+        { name: "Deirdre Healy", email: "deirdre.healy@dulra.ie", role: "Botanist", actionsCount: 8 },
+        { name: "Ronan Daly", email: "ronan.daly@dulra.ie", role: "Field Ecologist", actionsCount: 13 },
+        { name: "Grainne Casey", email: "grainne.casey@dulra.ie", role: "Senior Ecologist", actionsCount: 7 },
+        { name: "Colm Maher", email: "colm.maher@dulra.ie", role: "Data Analyst", actionsCount: 2 },
+        { name: "Maeve O'Sullivan", email: "maeve.osullivan@dulra.ie", role: "Graduate Ecologist", actionsCount: 16 }
     ]
 };
 
@@ -42,35 +62,49 @@ export const gisFields = [
     { id: 'notes_species', name: 'NOTES / SPECIES', description: 'General comments, characteristic, or notable species.' }
 ];
 
-export const sacConditionsCsv = `Site Name ,Site code,Last Upate ,Habitats Health ,Species Health 
-River Barrow and River Nore SAC,2162,June 2025,Inadequate,Bad
-Hook Head SAC,764,January 2025,Favourable,Favourable
-Belgica Mound Province SAC,2327,January 2025,Inadequate,Inadequate
-West Connacht Coast SAC,2998,January 2025,Bad,Favourable
-Codling Fault Zone SAC,3015,January 2025,Favourable,Inadequate
-Lambay Island SAC,204,December 2024,Bad,Bad
-Killyconny Bog (Cloghbally) SAC,6,November 2024,Favourable,Inadequate
-Lough Oughter and Associated Loughs SAC,7,November 2024,Favourable,Favourable
-Ballyallia Lake SAC,4,October 2024,Inadequate,Favourable
-Ballycullinan Lake SAC,10,October 2024,Bad,Inadequate
-Black Head/Poulsallagh Complex,20,September 2024,Favourable,Favourable
-Danes Hole Poulnalecka SAC,90,September 2024,Inadequate,Bad
-Dromore Woods & Loughs,32,August 2024,Favourable,Favourable
-Moyree River System,57,July 2024,Inadequate,Inadequate
-Glengarriff Harbour and Woodland,90,June 2024,Bad,Favourable
-Clonakilty Bay SAC,91,May 2024,Favourable,Inadequate
-Caha Mountains SAC,93,April 2024,Inadequate,Bad
-Lough Hyne Nature Reserve and Environs SAC,97,March 2024,Favourable,Favourable
-Roaringwater Bay and Islands SAC,101,February 2024,Inadequate,Inadequate
-Three Castle Head to Mizen Head,109,January 2024,Bad,Favourable`;
+export const sacConditionsCsv = `Site Name ,Site code,Last Upate ,Habitats Health ,Species Health,COUNTY
+River Barrow and River Nore SAC,2162,June 2025,Inadequate,Bad,Wexford
+Hook Head SAC,764,January 2025,Favourable,Favourable,Wexford
+Belgica Mound Province SAC,2327,January 2025,Inadequate,Inadequate,Offshore
+West Connacht Coast SAC,2998,January 2025,Bad,Favourable,Galway
+Codling Fault Zone SAC,3015,January 2025,Favourable,Inadequate,Offshore
+Lambay Island SAC,204,December 2024,Bad,Bad,Dublin
+Killyconny Bog (Cloghbally) SAC,6,November 2024,Favourable,Inadequate,Cavan
+Lough Oughter and Associated Loughs SAC,7,November 2024,Favourable,Favourable,Cavan
+Ballyallia Lake SAC,4,October 2024,Inadequate,Favourable,Clare
+Ballycullinan Lake SAC,10,October 2024,Bad,Inadequate,Clare
+Black Head/Poulsallagh Complex,20,September 2024,Favourable,Favourable,Clare
+Danes Hole Poulnalecka SAC,90,September 2024,Inadequate,Bad,Clare
+Dromore Woods & Loughs,32,August 2024,Favourable,Favourable,Clare
+Moyree River System,57,July 2024,Inadequate,Inadequate,Clare
+Glengarriff Harbour and Woodland,90,June 2024,Bad,Favourable,Cork
+Clonakilty Bay SAC,91,May 2024,Favourable,Inadequate,Cork
+Caha Mountains SAC,93,April 2024,Inadequate,Bad,Cork
+Lough Hyne Nature Reserve and Environs SAC,97,March 2024,Favourable,Favourable,Cork
+Roaringwater Bay and Islands SAC,101,February 2024,Inadequate,Inadequate,Cork
+Three Castle Head to Mizen Head,109,January 2024,Bad,Favourable,Cork
+Ballymacoda Bay SAC,77,Dec 2023,Favourable,Favourable,Cork
+Great Island Channel SAC,1058,Nov 2023,Inadequate,Favourable,Cork
+Blackwater River SAC,2170,Oct 2023,Bad,Bad,Cork
+Old Head of Kinsale SAC,70,Sep 2023,Favourable,Inadequate,Cork
+Courtmacsherry Estuary SAC,81,Aug 2023,Inadequate,Inadequate,Cork
+Kilkeran Lake and Castlefreke Dunes SAC,71,Jul 2023,Favourable,Favourable,Cork
+Galley Head to Duneen Head SAC,69,Jun 2023,Bad,Favourable,Cork
+Sheep's Head SAC,79,May 2023,Favourable,Inadequate,Cork
+Kenmare River SAC,2158,Apr 2023,Inadequate,Bad,Cork
+Beara Peninsula SAC,84,Mar 2023,Favourable,Favourable,Cork`;
 
-export const spaConditionsCsv = `Site Name ,Site Code ,Last Updated,Habitats Health ,Species Health 
-Lady's Island Lake SPA,4009,July 2025,Favourable,Favourable
-Termoncarragh Lake and Annagh Machair SPA,4093,June 2025,Inadequate,Favourable
-Inishmore SPA,4152,June 2025,Bad,Bad
-Dingle Peninsula SPA,4153,June 2025,Favourable,Inadequate
-Horn Head to Fanad Head SPA,4194,June 2025,Inadequate,Inadequate
-Cliffs of Moher SPA,4005,June 2025,Favourable,Favourable`;
+export const spaConditionsCsv = `Site Name ,Site Code ,Last Updated,Habitats Health ,Species Health,COUNTY
+Lady's Island Lake SPA,4009,July 2025,Favourable,Favourable,Wexford
+Termoncarragh Lake and Annagh Machair SPA,4093,June 2025,Inadequate,Favourable,Mayo
+Inishmore SPA,4152,June 2025,Bad,Bad,Galway
+Dingle Peninsula SPA,4153,June 2025,Favourable,Inadequate,Kerry
+Horn Head to Fanad Head SPA,4194,June 2025,Inadequate,Inadequate,Donegal
+Cliffs of Moher SPA,4005,June 2025,Favourable,Favourable,Clare
+Cork Harbour SPA,4030,May 2025,Inadequate,Favourable,Cork
+Ballymacoda Bay SPA,4023,April 2025,Favourable,Favourable,Cork
+Sovereign Islands SPA,4124,March 2025,Bad,Inadequate,Cork
+Clonakilty Bay SPA,4081,Feb 2025,Inadequate,Bad,Cork`;
 
 export const nhaConditionsCsv = `Site Name ,Site Code ,Last Updated,Habitats Health ,Species Health 
 Slieve Rushen Bog NHA,9,Not Assigned,Cavan,674.7
@@ -103,7 +137,22 @@ export const assessmentsCsvData = `SITECODE,SITE_NAME,Status,COUNTY,HA,Link to S
 101, Roaringwater Bay and Islands SAC, Completed, Sligo,470,
 106, St. Gobnet's Wood SAC, Completed, Donegal,216,
 109, Three Castle Head to Mizen Head, Completed, Donegal,540,
-111, Aran Island (Donegal) Cliffs SAC, Completed, Donegal, 613,`;
+111, Aran Island (Donegal) Cliffs SAC, Completed, Donegal, 613,
+1058,Great Island Channel SAC,In Progress,Cork,1200,
+2170,Blackwater River SAC,Pending,Cork,15000,
+70,Old Head of Kinsale SAC,Not Assigned,Cork,250,
+81,Courtmacsherry Estuary SAC,Completed,Cork,750,
+71,Kilkeran Lake and Castlefreke Dunes SAC,In Progress,Cork,300,
+69,Galley Head to Duneen Head SAC,Pending,Cork,400,
+79,Sheep's Head SAC,Not Assigned,Cork,600,
+2158,Kenmare River SAC,Completed,Cork,25000,
+84,Beara Peninsula SAC,In Progress,Cork,1800,
+4030,Cork Harbour SPA,Pending,Cork,6500,
+4023,Ballymacoda Bay SPA,Not Assigned,Cork,1000,
+4124,Sovereign Islands SPA,Completed,Cork,50,
+4081,Clonakilty Bay SPA,In Progress,Cork,600,
+72,Bandon River SAC,Pending,Cork,800,
+75,Gyleen races and Dumping Ground SAC,Not Assigned,Cork,1300,`;
 
 export const actionsCsvData = `SITECODE,SITE_NAME,Status,COUNTY,Action Type,Link to Survey
 245,Clooncullaun Bog NHA,In Progress,Galway,Site and habitat management,https://www.npws.ie/protected-sites/nha/000245
@@ -136,7 +185,22 @@ export const actionsCsvData = `SITECODE,SITE_NAME,Status,COUNTY,Action Type,Link
 101, Roaringwater Bay and Islands SAC, Completed, Sligo,Site and habitat management,
 106, St. Gobnet's Wood SAC, Completed,Donegal,Site and habitat management
 109, Three Castle Head to Mizen Head, Completed, Donegal,Site and habitat management,
-111, Aran Island (Donegal) Cliffs SAC, Completed,Donegal,Site and habitat management,`;
+111, Aran Island (Donegal) Cliffs SAC, Completed,Donegal,Site and habitat management,
+1058,Great Island Channel SAC,In Progress,Cork,Invasive Species Control,
+2170,Blackwater River SAC,Pending,Cork,Hydrological Works,
+70,Old Head of Kinsale SAC,Not Assigned,Cork,Species Monitoring,
+81,Courtmacsherry Estuary SAC,Completed,Cork,Path Repair,
+71,Kilkeran Lake and Castlefreke Dunes SAC,In Progress,Cork,Visitor Management,
+69,Galley Head to Duneen Head SAC,Pending,Cork,Grazing Management,
+79,Sheep's Head SAC,Not Assigned,Cork,Scrub Removal,
+2158,Kenmare River SAC,Completed,Cork,Invasive Species Control,
+84,Beara Peninsula SAC,In Progress,Cork,Hydrological Works,
+4030,Cork Harbour SPA,Pending,Cork,Species Monitoring,
+4023,Ballymacoda Bay SPA,Not Assigned,Cork,Path Repair,
+4124,Sovereign Islands SPA,Completed,Cork,Visitor Management,
+4081,Clonakilty Bay SPA,In Progress,Cork,Grazing Management,
+72,Bandon River SAC,Pending,Cork,Scrub Removal,
+75,Gyleen races and Dumping Ground SAC,Not Assigned,Cork,Invasive Species Control,`;
 
 export const clonakiltyBayActions: ActionCategory[] = [
   {

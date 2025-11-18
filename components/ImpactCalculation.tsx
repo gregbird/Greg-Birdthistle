@@ -44,9 +44,11 @@ const ImpactCalculationView: React.FC = () => {
             return;
         }
 
-        const failedCriteria = Object.values(assessmentData).filter(r => r.status === 'Fail');
+        // FIX: Explicitly type the 'r' parameter to resolve 'unknown' type error.
+        const failedCriteria = Object.values(assessmentData).filter((r: SFA_CriterionResult) => r.status === 'Fail');
         const failedCount = failedCriteria.length;
-        const totalAreaAffected = failedCriteria.reduce((sum, r) => sum + Number(r.areaAffected || 0), 0);
+        // Fix: Explicitly type the `sum` parameter in the reduce function to resolve 'unknown' type error.
+        const totalAreaAffected = failedCriteria.reduce((sum: number, r: SFA_CriterionResult) => sum + Number(r.areaAffected || 0), 0);
 
         let status: SFA_Result['overallStatus'] = 'Favourable';
         if (failedCount > 0) {

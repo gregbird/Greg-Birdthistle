@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import type { ViewState, TeamMember, Project, Survey, AIChatMessage } from '../types';
 import { ViewType } from '../types';
@@ -476,14 +477,167 @@ const DataMineView: React.FC = () => {
 };
 
 const VisualisationView: React.FC = () => {
-    // Implement Visualisation view logic here
+    const [currentStep, setCurrentStep] = useState('basic');
+
+    const navItems = [
+        { id: 'basic', name: 'Basic Information', icon: 'Edit' },
+        { id: 'impacts', name: 'Impacts', icon: 'Speaker' },
+        { id: 'metrics', name: 'Metrics', icon: 'BarChart3' },
+        { id: 'habitats', name: 'Habitats', icon: 'Leaf' },
+        { id: 'sites', name: 'Sites', icon: 'Map' },
+        { id: 'funding', name: 'Funding', icon: 'Landmark' },
+        { id: 'badges', name: 'Badges', icon: 'Award' },
+        { id: 'finish', name: 'Finish', icon: 'CheckCircle' }
+    ];
+
+    const renderStepContent = () => {
+        const item = navItems.find(i => i.id === currentStep);
+        switch (currentStep) {
+            case 'basic':
+                return (
+                    <div>
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Project name</label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <div className="bg-gray-200 p-1 rounded-sm">
+                                       <Lucide.Trees className="w-5 h-5 text-gray-600" />
+                                    </div>
+                                </div>
+                                <input type="text" placeholder="Enter project name" className="w-full p-3 pl-12 border border-gray-300 rounded-md bg-white"/>
+                            </div>
+                        </div>
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+                            <select className="w-full p-3 border border-gray-300 rounded-md bg-white">
+                                <option>Ireland</option>
+                                <option>United Kingdom</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea rows={4} placeholder="Project description..." className="w-full p-3 border border-gray-300 rounded-md bg-white"></textarea>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                                <div className="relative">
+                                     <input type="text" placeholder="dd/mm/yyyy" className="w-full p-3 border border-gray-300 rounded-md bg-white"/>
+                                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                         <Lucide.Calendar className="w-5 h-5 text-gray-400" />
+                                     </div>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                                <div className="relative">
+                                    <input type="text" placeholder="dd/mm/yyyy" className="w-full p-3 border border-gray-300 rounded-md bg-white"/>
+                                     <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                         <Lucide.Calendar className="w-5 h-5 text-gray-400" />
+                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mb-6">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Current Phase</label>
+                            <input type="text" placeholder="e.g., Planning" className="w-full p-3 border border-gray-300 rounded-md bg-white"/>
+                        </div>
+                    </div>
+                );
+            case 'finish':
+                return (
+                    <div>
+                        <h3 className="text-2xl font-bold text-secondary mb-4">Project Visualisation Ready</h3>
+                        <p className="text-gray-600 mb-4">Your project visualisation is now configured. You can view it at the public link below or by clicking the button.</p>
+                        <div className="bg-gray-100 p-4 rounded-md mb-4">
+                            <a href="https://app.dulra.io/map/fe98c2fd-7371-4af1-a598-50eb9482fc9b" target="_blank" rel="noopener noreferrer" className="text-accent font-medium hover:underline break-all">
+                                https://app.dulra.io/map/fe98c2fd-7371-4af1-a598-50eb9482fc9b
+                            </a>
+                        </div>
+                        <a href="https://app.dulra.io/map/fe98c2fd-7371-4af1-a598-50eb9482fc9b" target="_blank" rel="noopener noreferrer" className="inline-flex items-center space-x-2 bg-secondary text-white py-2 px-4 rounded-md hover:bg-gray-700">
+                           <Lucide.ExternalLink className="w-4 h-4" />
+                           <span>Show Visualisation</span>
+                        </a>
+                    </div>
+                );
+            case 'impacts':
+            case 'metrics':
+            case 'habitats':
+            case 'sites':
+            case 'funding':
+            case 'badges':
+                return (
+                    <div>
+                        <h3 className="text-2xl font-bold text-secondary">{item?.name}</h3>
+                        <p className="mt-2 text-gray-500">Configuration options for this section will be available here.</p>
+                    </div>
+                );
+            default: // Should not be reached but good practice
+                 return (
+                    <div>
+                        <h3 className="text-2xl font-bold text-secondary">Unknown Step</h3>
+                        <p className="mt-2 text-gray-500">Please select a valid configuration step.</p>
+                    </div>
+                );
+        }
+    };
+    
+    const currentStepIndex = navItems.findIndex(item => item.id === currentStep);
+    const nextStepId = currentStepIndex < navItems.length - 1 ? navItems[currentStepIndex + 1].id : null;
+
     return (
         <div className="p-4 md:p-8">
-            <h2 className="text-3xl font-bold text-secondary">Visualisation</h2>
-            <p className="text-gray-500 mt-1">Feature coming soon.</p>
+            <h2 className="text-3xl font-bold text-secondary">Configure Project Visualisation</h2>
+            <p className="text-gray-500 mt-1">Set up your project's public-facing visualisation page.</p>
+            
+            <div className="mt-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+                {/* Left Nav */}
+                <div className="lg:col-span-1">
+                    <nav className="space-y-1">
+                        {navItems.map(item => {
+                            const Icon = Lucide[item.icon as keyof typeof Lucide] as React.ElementType;
+                            return (
+                                <button
+                                    key={item.id}
+                                    onClick={() => setCurrentStep(item.id)}
+                                    className={`w-full flex items-center space-x-3 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                                        currentStep === item.id 
+                                            ? 'bg-blue-100 text-accent' 
+                                            : 'text-gray-600 hover:bg-gray-100'
+                                    }`}
+                                >
+                                    <Icon className={`w-5 h-5 ${currentStep === item.id ? 'text-accent' : 'text-gray-500'}`} />
+                                    <span>{item.name}</span>
+                                </button>
+                            );
+                        })}
+                    </nav>
+                </div>
+
+                {/* Right Content */}
+                <div className="lg:col-span-3 bg-surface p-6 md:p-8 rounded-lg shadow-md flex flex-col">
+                    <div className="flex-grow">
+                        {renderStepContent()}
+                    </div>
+
+                    <div className="mt-8 border-t pt-6 flex justify-end items-center space-x-4">
+                        <button className="text-sm font-medium text-gray-600 hover:text-gray-800">Cancel</button>
+                        {nextStepId ? (
+                             <button onClick={() => setCurrentStep(nextStepId)} className="bg-accent text-white py-2 px-4 rounded-md hover:bg-orange-500 flex items-center space-x-2">
+                                <span>Next step</span>
+                                <Lucide.ArrowRight className="w-4 h-4" />
+                            </button>
+                        ) : (
+                            <button className="bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700">Finish</button>
+                        )}
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
+
 
 export const TeamView: React.FC<{ team: TeamMember[], openThirdPartyModal: () => void }> = ({ team, openThirdPartyModal }) => (
     <div className="p-4 md:p-8">
@@ -501,6 +655,7 @@ export const TeamView: React.FC<{ team: TeamMember[], openThirdPartyModal: () =>
                         <th className="p-4 text-sm font-semibold">Name</th>
                         <th className="p-4 text-sm font-semibold">Email</th>
                         <th className="p-4 text-sm font-semibold">Role</th>
+                        <th className="p-4 text-sm font-semibold text-center">Assigned Actions</th>
                         <th className="p-4 text-sm font-semibold">Actions</th>
                     </tr>
                 </thead>
@@ -510,6 +665,7 @@ export const TeamView: React.FC<{ team: TeamMember[], openThirdPartyModal: () =>
                             <td className="p-4 font-medium">{member.name}</td>
                             <td className="p-4 text-gray-600">{member.email}</td>
                             <td className="p-4"><span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">{member.role}</span></td>
+                            <td className="p-4 text-center font-medium text-secondary">{member.actionsCount || 0}</td>
                             <td className="p-4"><button className="text-gray-400 hover:text-accent"><Lucide.MoreHorizontal /></button></td>
                         </tr>
                     ))}

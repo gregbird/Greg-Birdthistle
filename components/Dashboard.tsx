@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import type { ViewState } from '../types';
 import { ViewType } from '../types';
@@ -7,6 +6,11 @@ import { parseCsv, getStatusColorClass, registerChartPlugins } from '../services
 
 // Declare Chart.js from CDN
 declare var Chart: any;
+
+interface DashboardProps {
+    setView: (view: ViewState) => void;
+    currentUserRole: 'parent' | 'child';
+}
 
 const DoughnutChart: React.FC<{ chartId: string, data: any, options: any }> = ({ chartId, data, options }) => {
     const chartRef = useRef<HTMLCanvasElement>(null);
@@ -86,24 +90,19 @@ const SiteStatusTable: React.FC<{ data: any[] }> = ({ data }) => {
     );
 };
 
-const KeyStats: React.FC = () => {
+const KeyStats: React.FC<{ currentUserRole: 'parent' | 'child' }> = ({ currentUserRole }) => {
     const [activeTab, setActiveTab] = React.useState('habitats');
 
-    const statsData = {
-        habitats: {
-            total: 240,
-            favourable: 190,
-            inadequate: 40,
-            unfavourable: 10,
-        },
-        species: {
-            total: 180,
-            favourable: 120,
-            inadequate: 45,
-            unfavourable: 15,
-        }
+    const parentStatsData = {
+        habitats: { total: 240, favourable: 190, inadequate: 40, unfavourable: 10 },
+        species: { total: 180, favourable: 120, inadequate: 45, unfavourable: 15 }
+    };
+    const childStatsData = {
+        habitats: { total: 12, favourable: 8, inadequate: 3, unfavourable: 1 },
+        species: { total: 9, favourable: 6, inadequate: 2, unfavourable: 1 }
     };
 
+    const statsData = currentUserRole === 'parent' ? parentStatsData : childStatsData;
     const currentStats = statsData[activeTab as keyof typeof statsData];
 
     const tabButtonClass = (tabName: string) => 
@@ -138,14 +137,18 @@ const KeyStats: React.FC = () => {
 };
 
 
-const DashboardView: React.FC<{ setView: (view: ViewState) => void }> = ({ setView }) => {
+const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) => {
     const [siteStatusTab, setSiteStatusTab] = React.useState('sac');
 
-    const siteStatusData = React.useMemo(() => {
+    const allSiteStatusData = React.useMemo(() => {
         if (siteStatusTab === 'sac') return parseCsv(sacConditionsCsv);
         if (siteStatusTab === 'spa') return parseCsv(spaConditionsCsv);
         return parseCsv(nhaConditionsCsv);
     }, [siteStatusTab]);
+    
+    const siteStatusData = currentUserRole === 'parent'
+        ? allSiteStatusData
+        : allSiteStatusData.filter(d => d.COUNTY === 'Cork');
 
     const chartOptions = {
         responsive: true,
@@ -176,21 +179,25 @@ const DashboardView: React.FC<{ setView: (view: ViewState) => void }> = ({ setVi
         }
     };
 
-    const actionsChartData = {
+    const parentActionsChartData = {
         labels: ['Not Assigned', 'Pending', 'In Progress', 'Completed'],
-        datasets: [{
-            data: [5, 3, 8, 12],
-            backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'],
-        }]
+        datasets: [{ data: [5, 3, 8, 12], backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'] }]
     };
+    const childActionsChartData = {
+        labels: ['Not Assigned', 'Pending', 'In Progress', 'Completed'],
+        datasets: [{ data: [1, 0, 2, 1], backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'] }]
+    };
+    const actionsChartData = currentUserRole === 'parent' ? parentActionsChartData : childActionsChartData;
     
-    const surveysChartData = {
+    const parentSurveysChartData = {
         labels: ['Not Assigned', 'Pending', 'In Progress', 'Completed'],
-        datasets: [{
-            data: [3, 1, 2, 8],
-            backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'],
-        }]
+        datasets: [{ data: [3, 1, 2, 8], backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'] }]
     };
+    const childSurveysChartData = {
+        labels: ['Not Assigned', 'Pending', 'In Progress', 'Completed'],
+        datasets: [{ data: [0, 0, 1, 1], backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'] }]
+    };
+    const surveysChartData = currentUserRole === 'parent' ? parentSurveysChartData : childSurveysChartData;
 
     const tabButtonClass = (tabName: string) => 
         `whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${siteStatusTab === tabName ? 'border-accent text-accent' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`;
@@ -215,7 +222,7 @@ const DashboardView: React.FC<{ setView: (view: ViewState) => void }> = ({ setVi
                     <h3 className="font-semibold text-secondary text-center">Assessment Status</h3>
                     <div className="h-64 mx-auto mt-4"><DoughnutChart chartId="surveys-chart" data={surveysChartData} options={chartOptions}/></div>
                 </div>
-                <KeyStats />
+                <KeyStats currentUserRole={currentUserRole} />
             </div>
             
             <div className="bg-surface p-6 rounded-lg shadow-md">

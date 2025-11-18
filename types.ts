@@ -1,4 +1,3 @@
-
 export enum ViewType {
   Dashboard = 'dashboard-view',
   Tasks = 'tasks-view',
@@ -42,12 +41,14 @@ export interface Survey {
   template: string;
   status: 'Ready' | 'In Progress' | 'Completed';
   data: { [key: string]: any };
+  assignedTo?: string[];
 }
 
 export interface TeamMember {
   name: string;
   email: string;
   role: string;
+  actionsCount?: number;
 }
 
 export interface SurveyTemplate {
