@@ -258,79 +258,14 @@ const GisMappingView: React.FC = () => {
                     <div className="lg:col-span-3">
                         <div className="bg-surface p-2 rounded-lg shadow-md">
                             <div className="relative w-full h-[600px] bg-gray-100 rounded-md overflow-hidden">
-                                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50">
-                                    <svg className="w-full h-full" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
-                                        <defs>
-                                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e0e0e0" strokeWidth="0.5"/>
-                                            </pattern>
-                                        </defs>
-                                        <rect width="1200" height="600" fill="url(#grid)" />
-
-                                        {/* Ireland coastline simplified */}
-                                        <path d="M 400 150 Q 380 120 350 130 Q 320 140 300 180 L 280 250 Q 270 300 290 350 Q 300 380 280 420 L 250 480 Q 260 520 300 530 Q 350 540 400 520 Q 450 510 480 480 L 520 430 Q 560 380 580 320 Q 600 260 580 200 Q 560 150 520 130 Q 480 120 450 140 Z"
-                                              fill="#c7e8c7"
-                                              stroke="#2d5016"
-                                              strokeWidth="2"/>
-
-                                        {/* Water bodies */}
-                                        <circle cx="380" cy="280" r="15" fill="#4a90e2" opacity="0.6" />
-                                        <ellipse cx="320" cy="350" rx="25" ry="15" fill="#4a90e2" opacity="0.6" />
-
-                                        {/* Visible layers based on selection */}
-                                        {layerVisibility['Natural Heritage Areas'] && (
-                                            <>
-                                                <polygon points="350,200 380,190 390,220 360,230" fill="#90EE90" opacity="0.7" stroke="#228B22" strokeWidth="1.5" />
-                                                <text x="365" y="215" fontSize="10" fill="#1a5c1a" fontWeight="bold">NHA</text>
-                                            </>
-                                        )}
-
-                                        {layerVisibility['Special Area of Conservation'] && (
-                                            <>
-                                                <polygon points="420,300 460,290 470,330 440,340 410,320" fill="#FFD700" opacity="0.7" stroke="#DAA520" strokeWidth="2" />
-                                                <text x="430" y="320" fontSize="10" fill="#8B6914" fontWeight="bold">SAC</text>
-                                            </>
-                                        )}
-
-                                        {layerVisibility['Special Areas of Protection'] && (
-                                            <>
-                                                <polygon points="300,400 340,390 350,430 320,445" fill="#FF6B6B" opacity="0.7" stroke="#C92A2A" strokeWidth="2" />
-                                                <text x="315" y="420" fontSize="10" fill="#8B0000" fontWeight="bold">SPA</text>
-                                            </>
-                                        )}
-
-                                        {layerVisibility['Pollution Impact Potential for Nitrogen'] && (
-                                            <>
-                                                <circle cx="500" cy="250" r="40" fill="#FFA500" opacity="0.5" stroke="#FF8C00" strokeWidth="2" strokeDasharray="5,5" />
-                                                <text x="480" y="255" fontSize="9" fill="#8B4500">N Impact</text>
-                                            </>
-                                        )}
-
-                                        {layerVisibility['Pollution Impact Potential for Phosphorus'] && (
-                                            <>
-                                                <circle cx="340" cy="450" r="35" fill="#9370DB" opacity="0.5" stroke="#663399" strokeWidth="2" strokeDasharray="5,5" />
-                                                <text x="323" y="455" fontSize="9" fill="#4B0082">P Impact</text>
-                                            </>
-                                        )}
-
-                                        {/* Cork markers */}
-                                        <g transform="translate(280, 470)">
-                                            <circle r="5" fill="#E63946" stroke="white" strokeWidth="2"/>
-                                            <text x="10" y="5" fontSize="11" fill="#1a1a1a" fontWeight="600">Cork</text>
-                                        </g>
-
-                                        {/* Site markers for Cork sites */}
-                                        <g transform="translate(260, 440)">
-                                            <circle r="4" fill="#0077BE" stroke="white" strokeWidth="1.5"/>
-                                            <text x="8" y="4" fontSize="9" fill="#1a1a1a">Clonakilty Bay</text>
-                                        </g>
-
-                                        <g transform="translate(300, 450)">
-                                            <circle r="4" fill="#0077BE" stroke="white" strokeWidth="1.5"/>
-                                            <text x="8" y="4" fontSize="9" fill="#1a1a1a">Rossbehy</text>
-                                        </g>
-                                    </svg>
-                                </div>
+                                <img
+                                    src={visibleLayers.length > 0
+                                        ? "/Screenshot 2025-11-19 at 09.25.35.png"
+                                        : "/Screenshot 2025-11-19 at 09.25.03.png"
+                                    }
+                                    alt="GIS Map of Ireland"
+                                    className="w-full h-full object-cover"
+                                />
 
                                 {/* Map controls */}
                                 <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-2 space-y-2">
