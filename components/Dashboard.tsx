@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import * as Lucide from 'lucide-react';
 import type { ViewState } from '../types';
 import { ViewType } from '../types';
 import { assessmentsCsvData, actionsCsvData } from '../constants';
@@ -201,6 +202,10 @@ const KeyStats: React.FC<{ currentUserRole: 'parent' | 'child' }> = ({ currentUs
 const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) => {
     const [activeTab, setActiveTab] = React.useState('assessments');
 
+    if (currentUserRole === 'child') {
+        return <MyTasksView setView={setView} />;
+    }
+
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -283,6 +288,188 @@ const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) =
             <div className="mt-6">
                 {activeTab === 'assessments' && <AssessmentsTable setView={setView} currentUserRole={currentUserRole} />}
                 {activeTab === 'actions' && <ActionsTable setView={setView} currentUserRole={currentUserRole} />}
+            </div>
+        </div>
+    );
+};
+
+const MyTasksView: React.FC<{ setView: (view: ViewState) => void }> = ({ setView }) => {
+    const tasks = [
+        {
+            id: 1,
+            site: 'Clonakilty Bay SAC',
+            siteCode: '91',
+            type: 'Assessment',
+            status: 'In Progress',
+            phase: 'Desk Research',
+            dueDate: '2025-12-01',
+            description: 'Complete habitat assessment and data collection'
+        },
+        {
+            id: 2,
+            site: 'Rossbehy SAC',
+            siteCode: '13',
+            type: 'Assessment',
+            status: 'Not Started',
+            phase: 'Not Started',
+            dueDate: '2025-12-15',
+            description: 'Conduct ecological impact assessment'
+        }
+    ];
+
+    const getPhaseIcon = (phase: string) => {
+        switch(phase) {
+            case 'Desk Research': return Lucide.Database;
+            case 'Field Research': return Lucide.MapPin;
+            case 'Reporting': return Lucide.FileText;
+            default: return Lucide.Circle;
+        }
+    };
+
+    const getNextAction = (phase: string) => {
+        switch(phase) {
+            case 'Not Started':
+                return { text: 'Start Desk Research', view: ViewType.DataMine, icon: Lucide.Database };
+            case 'Desk Research':
+                return { text: 'Continue to Field Survey', view: ViewType.FieldSurvey, icon: Lucide.MapPin };
+            case 'Field Research':
+                return { text: 'Generate Report', view: ViewType.Reporting, icon: Lucide.FileText };
+            default:
+                return { text: 'View Details', view: ViewType.AssessmentDetail, icon: Lucide.Eye };
+        }
+    };
+
+    return (
+        <div className="p-4 md:p-8">
+            <h2 className="text-3xl font-bold text-secondary mb-6">My Tasks</h2>
+
+            {/* Workflow Guide */}
+            <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg shadow-md mb-6">
+                <h3 className="text-lg font-semibold text-secondary mb-4">Assessment Workflow</h3>
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center space-x-3">
+                        <div className="bg-blue-500 text-white rounded-full p-3">
+                            <Lucide.Database className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <div className="font-semibold">1. Desk Research</div>
+                            <div className="text-sm text-gray-600">GIS Mapping & Data Mine</div>
+                        </div>
+                    </div>
+                    <Lucide.ArrowRight className="w-6 h-6 text-gray-400" />
+                    <div className="flex items-center space-x-3">
+                        <div className="bg-green-500 text-white rounded-full p-3">
+                            <Lucide.MapPin className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <div className="font-semibold">2. Field Research</div>
+                            <div className="text-sm text-gray-600">Field Survey & Impact Calculation</div>
+                        </div>
+                    </div>
+                    <Lucide.ArrowRight className="w-6 h-6 text-gray-400" />
+                    <div className="flex items-center space-x-3">
+                        <div className="bg-purple-500 text-white rounded-full p-3">
+                            <Lucide.FileText className="w-6 h-6" />
+                        </div>
+                        <div>
+                            <div className="font-semibold">3. Reporting</div>
+                            <div className="text-sm text-gray-600">Generate Assessment Report</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Tasks List */}
+            <div className="space-y-4">
+                {tasks.map(task => {
+                    const PhaseIcon = getPhaseIcon(task.phase);
+                    const nextAction = getNextAction(task.phase);
+                    const NextActionIcon = nextAction.icon;
+
+                    return (
+                        <div key={task.id} className="bg-surface p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                                <div className="flex-1">
+                                    <div className="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h3 className="text-xl font-semibold text-secondary">{task.site}</h3>
+                                            <p className="text-sm text-gray-500">Site Code: {task.siteCode}</p>
+                                        </div>
+                                        <span className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColorClass(task.status)}`}>
+                                            {task.status}
+                                        </span>
+                                    </div>
+                                    <p className="text-gray-600 mb-3">{task.description}</p>
+                                    <div className="flex flex-wrap items-center gap-4 text-sm">
+                                        <div className="flex items-center space-x-2">
+                                            <PhaseIcon className="w-4 h-4 text-accent" />
+                                            <span className="font-medium">Current Phase:</span>
+                                            <span className="text-gray-600">{task.phase}</span>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <Lucide.Calendar className="w-4 h-4 text-accent" />
+                                            <span className="font-medium">Due:</span>
+                                            <span className="text-gray-600">{new Date(task.dueDate).toLocaleDateString('en-IE')}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col space-y-2">
+                                    <button
+                                        onClick={() => setView({ view: nextAction.view, param: { siteCode: task.siteCode } })}
+                                        className="bg-accent text-white py-2 px-6 rounded-md hover:brightness-95 flex items-center justify-center space-x-2 whitespace-nowrap"
+                                    >
+                                        <NextActionIcon className="w-4 h-4" />
+                                        <span>{nextAction.text}</span>
+                                    </button>
+                                    {task.phase !== 'Not Started' && (
+                                        <button
+                                            onClick={() => setView({ view: ViewType.AssessmentDetail, param: { siteCode: task.siteCode } })}
+                                            className="bg-gray-200 text-gray-700 py-2 px-6 rounded-md hover:bg-gray-300 flex items-center justify-center space-x-2 whitespace-nowrap"
+                                        >
+                                            <Lucide.Eye className="w-4 h-4" />
+                                            <span>View Details</span>
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
+            {/* Quick Actions */}
+            <div className="mt-8">
+                <h3 className="text-lg font-semibold text-secondary mb-4">Quick Actions</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button
+                        onClick={() => setView({ view: ViewType.GisMapping })}
+                        className="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600 transition-colors flex flex-col items-center space-y-2"
+                    >
+                        <Lucide.Map className="w-8 h-8" />
+                        <span className="font-semibold">GIS Mapping</span>
+                    </button>
+                    <button
+                        onClick={() => setView({ view: ViewType.DataMine })}
+                        className="bg-blue-500 text-white p-4 rounded-lg hover:bg-blue-600 transition-colors flex flex-col items-center space-y-2"
+                    >
+                        <Lucide.Database className="w-8 h-8" />
+                        <span className="font-semibold">Data Mine</span>
+                    </button>
+                    <button
+                        onClick={() => setView({ view: ViewType.FieldSurvey })}
+                        className="bg-green-500 text-white p-4 rounded-lg hover:bg-green-600 transition-colors flex flex-col items-center space-y-2"
+                    >
+                        <Lucide.ClipboardList className="w-8 h-8" />
+                        <span className="font-semibold">Field Survey</span>
+                    </button>
+                    <button
+                        onClick={() => setView({ view: ViewType.Reporting })}
+                        className="bg-purple-500 text-white p-4 rounded-lg hover:bg-purple-600 transition-colors flex flex-col items-center space-y-2"
+                    >
+                        <Lucide.FileText className="w-8 h-8" />
+                        <span className="font-semibold">Generate Report</span>
+                    </button>
+                </div>
             </div>
         </div>
     );

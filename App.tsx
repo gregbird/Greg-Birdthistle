@@ -59,7 +59,7 @@ const Sidebar: React.FC<{
       { name: 'Team Members', icon: 'Users', view: ViewType.Team },
       { name: 'Audit Trail', icon: 'History', view: ViewType.AuditTrail },
     ],
-    "Desktop Research": [
+    "Desk Research": [
         { name: 'GIS Mapping', icon: 'Map', view: ViewType.GisMapping },
         { name: 'Data Mine', icon: 'Database', view: ViewType.DataMine },
     ],
@@ -75,11 +75,11 @@ const Sidebar: React.FC<{
 
   const childMenuItems = {
     Workspace: [
-      { name: 'Dashboard', icon: 'LayoutDashboard', view: ViewType.Dashboard },
+      { name: 'My Tasks', icon: 'LayoutDashboard', view: ViewType.Dashboard },
       { name: 'Site Status', icon: 'CheckSquare', view: ViewType.Tasks },
       { name: 'Surveys', icon: 'Folder', view: ViewType.MySurveys },
     ],
-    "Desktop Research": menuItems["Desktop Research"],
+    "Desk Research": menuItems["Desk Research"],
     "Field Research": menuItems["Field Research"],
     Reporting: menuItems.Reporting,
   };
