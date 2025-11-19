@@ -1,4 +1,4 @@
-import type { SurveyTemplate, TeamMember, Survey, Project, ActionCategory, SFA_HabitatAssessmentRules } from './types';
+import type { SurveyTemplate, TeamMember, Survey, Project, ActionCategory, SFA_HabitatAssessmentRules, AuditEntry } from './types';
 
 export const surveyTemplates: SurveyTemplate[] = [
     { id: "PEA", name: "Preliminary Ecological Appraisal", description: "Phase 1 Habitat Survey to provide a baseline ecological assessment of a site, identifying key habitats and potential constraints.", icon: "ClipboardList" },
@@ -47,6 +47,29 @@ export const defaultDb: { projects: Project[]; surveys: Survey[]; team: TeamMemb
         { name: "Maeve O'Sullivan", email: "maeve.osullivan@dulra.ie", role: "Graduate Ecologist", actionsCount: 16 }
     ]
 };
+
+export const defaultAuditTrail: AuditEntry[] = [
+    { id: 1, timestamp: '2025-11-19T14:32:00', userName: 'Dr. Aoife Murphy', changeType: 'Created Project', itemName: 'Lough Ennell SAC', details: 'Project created for NPWS with code NPWS-001-25' },
+    { id: 2, timestamp: '2025-11-19T14:45:30', userName: 'Cian O\'Donnell', changeType: 'Created Assessment', itemName: 'Site A - Woodland', siteName: 'Site A - Woodland', details: 'PEA template selected' },
+    { id: 3, timestamp: '2025-11-19T15:12:15', userName: 'Siobhán Kelly', changeType: 'Updated GIS Mapping', itemName: 'Lough Ennell SAC', details: 'Updated habitat mapping with new boundary data' },
+    { id: 4, timestamp: '2025-11-19T15:45:00', userName: 'Conor Ryan', changeType: 'Data Input', itemName: 'Site A - Woodland', siteName: 'Site A - Woodland', details: 'Entered habitat classification: WD1 - Oak-birch-holly woodland' },
+    { id: 5, timestamp: '2025-11-19T16:20:30', userName: 'Aoife Doyle', changeType: 'Created Assessment', itemName: 'Site B - River Crossing', siteName: 'Site B - River Crossing', details: 'EcIA template selected' },
+    { id: 6, timestamp: '2025-11-19T16:55:45', userName: 'Roisin Farrell', changeType: 'Data Input', itemName: 'Site A - Woodland', siteName: 'Site A - Woodland', details: 'Recorded species: Sciurus vulgaris (Red Squirrel)' },
+    { id: 7, timestamp: '2025-11-19T17:10:00', userName: 'Liam Byrne', changeType: 'Created Action', itemName: 'Action-001', details: 'Conservation action created for habitat management' },
+    { id: 8, timestamp: '2025-11-19T17:35:20', userName: 'Fionnuala Gallagher', changeType: 'Data Input', itemName: 'Site B - River Crossing', siteName: 'Site B - River Crossing', details: 'Botanical survey data entered' },
+    { id: 9, timestamp: '2025-11-19T18:00:15', userName: 'Eoin Brennan', changeType: 'Updated GIS Mapping', itemName: 'Clonakilty Bay SAC', details: 'Added site access points and boundary layers' },
+    { id: 10, timestamp: '2025-11-19T18:25:40', userName: 'Sean McCarthy', changeType: 'Updated Assessment', itemName: 'Site A - Woodland', siteName: 'Site A - Woodland', details: 'Field observations and notes updated' },
+    { id: 11, timestamp: '2025-11-18T10:15:00', userName: 'Tadhg Kennedy', changeType: 'Data Input', itemName: 'Site A - Woodland', siteName: 'Site A - Woodland', details: 'Bird survey transect data recorded' },
+    { id: 12, timestamp: '2025-11-18T11:45:30', userName: 'Darragh Quinn', changeType: 'Created Project', itemName: 'Clonakilty Bay SAC', details: 'Project created for Cork CoCo with code CCC-091-24' },
+    { id: 13, timestamp: '2025-11-18T13:20:15', userName: 'Ciara Moore', changeType: 'Data Input', itemName: 'Lough Ennell SAC', siteName: 'Site A - Woodland', details: 'Data validation and QA checks completed' },
+    { id: 14, timestamp: '2025-11-18T14:50:00', userName: 'Padraig O\'Connor', changeType: 'Created Assessment', itemName: 'Site Assessment-001', siteName: 'Site A - Woodland', details: 'Habitat evaluation assessment started' },
+    { id: 15, timestamp: '2025-11-18T15:30:45', userName: 'Niamh Walsh', changeType: 'Updated Action', itemName: 'Action-001', details: 'Action status updated to In Progress' },
+    { id: 16, timestamp: '2025-11-18T16:00:20', userName: 'Orla Murray', changeType: 'Updated GIS Mapping', itemName: 'Lough Ennell SAC', details: 'Threat mapping layer added for invasive species' },
+    { id: 17, timestamp: '2025-11-18T16:45:10', userName: 'Ronan Daly', changeType: 'Data Input', itemName: 'Site B - River Crossing', siteName: 'Site B - River Crossing', details: 'Water quality parameters recorded' },
+    { id: 18, timestamp: '2025-11-18T17:15:35', userName: 'Grainne Casey', changeType: 'Created Action', itemName: 'Action-002', details: 'Restoration action for river habitat created' },
+    { id: 19, timestamp: '2025-11-17T09:30:00', userName: 'Aisling Fitzgerald', changeType: 'Created Assessment', itemName: 'NIS Assessment-001', siteName: 'Clonakilty Bay SAC', details: 'Natura Impact Statement assessment initiated' },
+    { id: 20, timestamp: '2025-11-17T10:20:45', userName: 'Deirdre Healy', changeType: 'Data Input', itemName: 'Clonakilty Bay SAC', siteName: 'Clonakilty Bay SAC', details: 'Botanical species list compiled' }
+];
 
 export const gisFields = [
     { id: 'foss_qualifi', name: 'FOSS_QUALIFI', description: 'Qualifier code for Guide to Habitats classification subtypes.' },

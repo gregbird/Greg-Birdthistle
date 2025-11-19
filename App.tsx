@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import * as Lucide from 'lucide-react';
-import type { ViewState, Project, Survey, TeamMember, ToastState } from './types';
+import type { ViewState, Project, Survey, TeamMember, ToastState, AuditEntry } from './types';
 import { ViewType } from './types';
-import { defaultDb, surveyTemplates } from './constants';
+import { defaultDb, surveyTemplates, defaultAuditTrail } from './constants';
 import DashboardView from './components/Dashboard';
 import TasksView from './components/Tasks';
 import SurveysView from './components/Surveys';
@@ -17,6 +17,7 @@ import ActionDetailView from './components/ActionDetail';
 import CreateActionView from './components/CreateAction';
 import FieldSurveyView from './components/FieldSurvey';
 import ImpactCalculationView from './components/ImpactCalculation';
+import AuditTrailView from './components/AuditTrail';
 
 // --- Helper Hook for Local Storage ---
 function useLocalStorage<T,>(key: string, initialValue: T): [T, (value: T) => void] {
@@ -56,6 +57,7 @@ const Sidebar: React.FC<{
       { name: 'Tasks', icon: 'CheckSquare', view: ViewType.Tasks },
       { name: 'Surveys', icon: 'Folder', view: ViewType.MySurveys },
       { name: 'Team Members', icon: 'Users', view: ViewType.Team },
+      { name: 'Audit Trail', icon: 'History', view: ViewType.AuditTrail },
     ],
     "Desktop Research": [
         { name: 'GIS Mapping', icon: 'Map', view: ViewType.GisMapping },
@@ -177,10 +179,11 @@ const PermissionDenied: React.FC = () => (
 
 const App: React.FC = () => {
   const [db, setDb] = useLocalStorage('dulraDb', defaultDb);
+  const [auditTrail, setAuditTrail] = useLocalStorage('dulraAuditTrail', defaultAuditTrail);
   const [viewState, setViewState] = useState<ViewState>({ view: ViewType.Dashboard });
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
   const [currentUserRole, setCurrentUserRole] = useLocalStorage<'parent' | 'child'>('dulraUserRole', 'parent');
-  
+
   // Modal States
   const [newSurveyModal, setNewSurveyModal] = useState<{show: boolean, templateId: string | null}>({show: false, templateId: null});
   const [assignSurveyModal, setAssignSurveyModal] = useState<{show: boolean, surveyId: number | null}>({show: false, surveyId: null});
@@ -283,6 +286,7 @@ const App: React.FC = () => {
       case ViewType.AssessmentDetail: return <AssessmentDetailView setView={setView} param={viewState.param}/>;
       case ViewType.ActionDetail: return <ActionDetailView setView={setView} />;
       case ViewType.CreateAction: return <CreateActionView setView={setView} showToast={showToast} />;
+      case ViewType.AuditTrail: return currentUserRole === 'parent' ? <AuditTrailView auditTrail={auditTrail} /> : <PermissionDenied />;
       case ViewType.SurveyForm: return null; // Handled separately
       default: return <DashboardView setView={setView} currentUserRole={currentUserRole}/>;
     }

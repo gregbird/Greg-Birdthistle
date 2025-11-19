@@ -20,6 +20,7 @@ export enum ViewType {
   Projects = 'projects-view',
   ActionDetail = 'action-detail-view',
   CreateAction = 'create-action-view',
+  AuditTrail = 'audit-trail-view',
 }
 
 export interface ViewState {
@@ -62,6 +63,16 @@ export interface ToastState {
   show: boolean;
   message: string;
   type: 'success' | 'error';
+}
+
+export interface AuditEntry {
+  id: number;
+  timestamp: string;
+  userName: string;
+  changeType: 'Created Project' | 'Created Assessment' | 'Updated Assessment' | 'Created Action' | 'Updated Action' | 'Updated GIS Mapping' | 'Data Input' | 'Other';
+  itemName: string;
+  siteName?: string;
+  details?: string;
 }
 
 export interface AIChatMessage {
