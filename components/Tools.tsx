@@ -243,7 +243,7 @@ const GisMappingView: React.FC = () => {
                             <div className="space-y-3">
                                 {selectedDatasets.map(dataset => (
                                     <label key={dataset} className="flex items-center space-x-3 cursor-pointer text-sm">
-                                        <input 
+                                        <input
                                             type="checkbox"
                                             checked={layerVisibility[dataset] || false}
                                             onChange={() => handleLayerVisibilityToggle(dataset)}
@@ -257,9 +257,13 @@ const GisMappingView: React.FC = () => {
                     </div>
                     <div className="lg:col-span-3">
                         <div className="bg-surface p-2 rounded-lg shadow-md">
-                            <div className="aspect-video bg-gray-200 rounded-md flex items-center justify-center">
-                                <img src={mapImageUrl} alt="GIS Map of Ireland" className="w-full h-full object-cover rounded-md" />
-                            </div>
+                            <iframe
+                                src="https://map.geohive.ie/mapviewer.html?webmap=76d6c0bcf43444b8b5e09a5d2950af71"
+                                width="100%"
+                                height="600px"
+                                style={{ border: 'none', borderRadius: '0.375rem' }}
+                                title="GIS Map Viewer"
+                            />
                         </div>
                     </div>
                 </div>
