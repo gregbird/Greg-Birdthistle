@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import type { ViewState } from '../types';
 import { ViewType } from '../types';
-import { sacConditionsCsv, spaConditionsCsv, nhaConditionsCsv } from '../constants';
+import { assessmentsCsvData, actionsCsvData } from '../constants';
 import { parseCsv, getStatusColorClass, registerChartPlugins } from '../services';
 
 // Declare Chart.js from CDN
@@ -40,52 +40,103 @@ const DoughnutChart: React.FC<{ chartId: string, data: any, options: any }> = ({
 };
 
 
-const SiteStatusTable: React.FC<{ data: any[] }> = ({ data }) => {
-    const generateRandomConservationString = () => {
-        const statuses = ['Favourable', 'Inadequate', 'Bad'];
-        const randStatus = () => statuses[Math.floor(Math.random() * 3)];
-        const statusColor = (status: string) => {
-            if (status === 'Favourable') return 'text-status-favourable';
-            if (status === 'Inadequate') return 'text-status-inadequate';
-            return 'text-status-bad';
-        };
-        
-        const s = [randStatus(), randStatus(), randStatus(), randStatus()];
+const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRole: 'parent' | 'child' }> = ({ setView, currentUserRole }) => {
+    const assessmentsData = React.useMemo(() => {
+        let data = parseCsv(assessmentsCsvData);
+        if (!data.some(item => item.SITECODE === '13')) {
+            data.push({ SITECODE: '13', SITE_NAME: 'Rossbehy', Status: 'Completed', COUNTY: 'Kerry', HA: '91.71' });
+        }
+        if (currentUserRole === 'child') {
+            return data.filter(row => row.COUNTY === 'Cork');
+        }
+        return data;
+    }, [currentUserRole]);
 
-        return (
-            <div className="text-xs space-y-1">
-                <div>Range: <span className={`font-medium ${statusColor(s[0])}`}>{s[0]}</span></div>
-                <div>Area: <span className={`font-medium ${statusColor(s[1])}`}>{s[1]}</span></div>
-                <div>Structure & Functions: <span className={`font-medium ${statusColor(s[2])}`}>{s[2]}</span></div>
-                <div>Future Prospects: <span className={`font-medium ${statusColor(s[3])}`}>{s[3]}</span></div>
-            </div>
-        );
-    };
-    
     return (
-        <div className="pr-2">
-            <table className="w-full text-left text-sm">
-                <thead className="bg-gray-50 sticky top-0">
-                    <tr>
-                        <th className="p-2 font-semibold">Site Code</th>
-                        <th className="p-2 font-semibold">Site Name</th>
-                        <th className="p-2 font-semibold">Habitats Health</th>
-                        <th className="p-2 font-semibold">Species Health</th>
-                        <th className="p-2 font-semibold">Last Updated</th>
-                    </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                    {data.map((row, index) => (
-                        <tr key={index} className="hover:bg-gray-50">
-                            <td className="p-2">{row.Sitecode}</td>
-                            <td className="p-2">{row.SiteName}</td>
-                            <td className="p-2">{generateRandomConservationString()}</td>
-                            <td className="p-2">{generateRandomConservationString()}</td>
-                            <td className="p-2">{row.LastUpate || row.LastUpdated || 'N/A'}</td>
+        <div className="bg-surface p-6 rounded-lg shadow-md">
+            <div className="h-[calc(100vh-18rem)] overflow-y-auto pr-2">
+                <table className="w-full text-left text-sm">
+                    <thead className="bg-gray-50 sticky top-0">
+                        <tr>
+                            <th className="p-2 font-semibold">Site Code</th>
+                            <th className="p-2 font-semibold">Site Name</th>
+                            <th className="p-2 font-semibold">Status</th>
+                            <th className="p-2 font-semibold">County</th>
+                            <th className="p-2 font-semibold text-right">Area (ha)</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {assessmentsData.map((row, index) => (
+                            <tr
+                                key={index}
+                                className={
+                                    row.SITECODE === '13' || row.SITECODE === '91'
+                                    ? "cursor-pointer hover:bg-blue-50"
+                                    : "hover:bg-gray-50"
+                                }
+                                onClick={() => {
+                                    if (row.SITECODE === '13') setView({ view: ViewType.AssessmentDetail, param: { siteCode: 13 } });
+                                    if (row.SITECODE === '91') setView({ view: ViewType.ActionDetail, param: { siteCode: 91 } });
+                                }}
+                            >
+                                <td className="p-2">{row.SITECODE}</td>
+                                <td className="p-2 font-medium text-secondary">{row.SITE_NAME}</td>
+                                <td className="p-2"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColorClass(row.Status)}`}>{row.Status}</span></td>
+                                <td className="p-2">{row.COUNTY}</td>
+                                <td className="p-2 text-right">{row.HA}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+const ActionsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRole: 'parent' | 'child' }> = ({ setView, currentUserRole }) => {
+    const actionsData = React.useMemo(() => {
+        const data = parseCsv(actionsCsvData);
+        if (currentUserRole === 'child') {
+            return data.filter(row => row.COUNTY === 'Cork');
+        }
+        return data;
+    }, [currentUserRole]);
+    return (
+        <div className="bg-surface p-6 rounded-lg shadow-md">
+            <div className="h-[calc(100vh-18rem)] overflow-y-auto pr-2">
+                <table className="w-full text-left text-sm">
+                    <thead className="bg-gray-50 sticky top-0">
+                        <tr>
+                            <th className="p-2 font-semibold">Site Code</th>
+                            <th className="p-2 font-semibold">Site Name</th>
+                            <th className="p-2 font-semibold">Status</th>
+                            <th className="p-2 font-semibold">Action Type</th>
+                            <th className="p-2 font-semibold">County</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                        {actionsData.map((row, index) => (
+                            <tr
+                                key={index}
+                                className={
+                                    row.SITECODE === '91'
+                                    ? "cursor-pointer hover:bg-blue-50"
+                                    : "hover:bg-gray-50"
+                                }
+                                onClick={() => {
+                                    if (row.SITECODE === '91') setView({ view: ViewType.ActionDetail, param: { siteCode: 91 } });
+                                }}
+                            >
+                                <td className="p-2">{row.SITECODE}</td>
+                                <td className="p-2 font-medium text-secondary">{row.SITE_NAME}</td>
+                                <td className="p-2"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColorClass(row.Status)}`}>{row.Status}</span></td>
+                                <td className="p-2">{row.ActionType}</td>
+                                <td className="p-2">{row.COUNTY}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
@@ -138,17 +189,7 @@ const KeyStats: React.FC<{ currentUserRole: 'parent' | 'child' }> = ({ currentUs
 
 
 const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) => {
-    const [siteStatusTab, setSiteStatusTab] = React.useState('sac');
-
-    const allSiteStatusData = React.useMemo(() => {
-        if (siteStatusTab === 'sac') return parseCsv(sacConditionsCsv);
-        if (siteStatusTab === 'spa') return parseCsv(spaConditionsCsv);
-        return parseCsv(nhaConditionsCsv);
-    }, [siteStatusTab]);
-    
-    const siteStatusData = currentUserRole === 'parent'
-        ? allSiteStatusData
-        : allSiteStatusData.filter(d => d.COUNTY === 'Cork');
+    const [activeTab, setActiveTab] = React.useState('assessments');
 
     const chartOptions = {
         responsive: true,
@@ -199,8 +240,8 @@ const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) =
     };
     const surveysChartData = currentUserRole === 'parent' ? parentSurveysChartData : childSurveysChartData;
 
-    const tabButtonClass = (tabName: string) => 
-        `whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${siteStatusTab === tabName ? 'border-accent text-accent' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`;
+    const tabButtonClass = (tabName: string) =>
+        `whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tabName ? 'border-accent text-accent' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`;
 
 
     return (
@@ -208,35 +249,30 @@ const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) =
             <h2 className="text-3xl font-bold text-secondary mb-6">Dashboard</h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-                <div 
-                    className="bg-surface p-6 rounded-lg shadow-md cursor-pointer transition-shadow hover:shadow-xl"
-                    onClick={() => setView({ view: ViewType.Tasks })}
-                >
+                <div className="bg-surface p-6 rounded-lg shadow-md">
                     <h3 className="font-semibold text-secondary text-center">Action Status</h3>
                     <div className="h-64 mx-auto mt-4"><DoughnutChart chartId="actions-chart" data={actionsChartData} options={chartOptions}/></div>
                 </div>
-                <div 
-                    className="bg-surface p-6 rounded-lg shadow-md cursor-pointer transition-shadow hover:shadow-xl"
-                    onClick={() => setView({ view: ViewType.Tasks })}
-                >
+                <div className="bg-surface p-6 rounded-lg shadow-md">
                     <h3 className="font-semibold text-secondary text-center">Assessment Status</h3>
                     <div className="h-64 mx-auto mt-4"><DoughnutChart chartId="surveys-chart" data={surveysChartData} options={chartOptions}/></div>
                 </div>
                 <KeyStats currentUserRole={currentUserRole} />
             </div>
             
-            <div className="bg-surface p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-bold text-secondary mb-4">Conservation Site Status</h3>
-                <div className="border-b border-gray-200">
-                    <nav className="-mb-px flex space-x-6" aria-label="Tabs">
-                        <button onClick={() => setSiteStatusTab('sac')} className={tabButtonClass('sac')}>SAC</button>
-                        <button onClick={() => setSiteStatusTab('spa')} className={tabButtonClass('spa')}>SPA</button>
-                        <button onClick={() => setSiteStatusTab('nha')} className={tabButtonClass('nha')}>NHA</button>
-                    </nav>
-                </div>
-                <div className="mt-4">
-                    <SiteStatusTable data={siteStatusData} />
-                </div>
+            <div className="border-b border-gray-200">
+                <nav className="-mb-px flex space-x-6" aria-label="Tabs">
+                    <button onClick={() => setActiveTab('assessments')} className={tabButtonClass('assessments')}>
+                        Conservation Assessments
+                    </button>
+                    <button onClick={() => setActiveTab('actions')} className={tabButtonClass('actions')}>
+                        Conservation Actions
+                    </button>
+                </nav>
+            </div>
+            <div className="mt-6">
+                {activeTab === 'assessments' && <AssessmentsTable setView={setView} currentUserRole={currentUserRole} />}
+                {activeTab === 'actions' && <ActionsTable setView={setView} currentUserRole={currentUserRole} />}
             </div>
         </div>
     );

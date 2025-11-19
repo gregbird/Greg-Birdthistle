@@ -54,7 +54,7 @@ const Sidebar: React.FC<{
     Workspace: [
       { name: 'Dashboard', icon: 'LayoutDashboard', view: ViewType.Dashboard },
       { name: 'Projects', icon: 'Briefcase', view: ViewType.Projects },
-      { name: 'Tasks', icon: 'CheckSquare', view: ViewType.Tasks },
+      { name: 'Site Status', icon: 'CheckSquare', view: ViewType.Tasks },
       { name: 'Surveys', icon: 'Folder', view: ViewType.MySurveys },
       { name: 'Team Members', icon: 'Users', view: ViewType.Team },
       { name: 'Audit Trail', icon: 'History', view: ViewType.AuditTrail },
@@ -76,7 +76,7 @@ const Sidebar: React.FC<{
   const childMenuItems = {
     Workspace: [
       { name: 'Dashboard', icon: 'LayoutDashboard', view: ViewType.Dashboard },
-      { name: 'Tasks', icon: 'CheckSquare', view: ViewType.Tasks },
+      { name: 'Site Status', icon: 'CheckSquare', view: ViewType.Tasks },
       { name: 'Surveys', icon: 'Folder', view: ViewType.MySurveys },
     ],
     "Desktop Research": menuItems["Desktop Research"],
