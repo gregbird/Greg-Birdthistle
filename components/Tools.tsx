@@ -257,13 +257,143 @@ const GisMappingView: React.FC = () => {
                     </div>
                     <div className="lg:col-span-3">
                         <div className="bg-surface p-2 rounded-lg shadow-md">
-                            <iframe
-                                src="https://map.geohive.ie/mapviewer.html?webmap=76d6c0bcf43444b8b5e09a5d2950af71"
-                                width="100%"
-                                height="600px"
-                                style={{ border: 'none', borderRadius: '0.375rem' }}
-                                title="GIS Map Viewer"
-                            />
+                            <div className="relative w-full h-[600px] bg-gray-100 rounded-md overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50">
+                                    <svg className="w-full h-full" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+                                        <defs>
+                                            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#e0e0e0" strokeWidth="0.5"/>
+                                            </pattern>
+                                        </defs>
+                                        <rect width="1200" height="600" fill="url(#grid)" />
+
+                                        {/* Ireland coastline simplified */}
+                                        <path d="M 400 150 Q 380 120 350 130 Q 320 140 300 180 L 280 250 Q 270 300 290 350 Q 300 380 280 420 L 250 480 Q 260 520 300 530 Q 350 540 400 520 Q 450 510 480 480 L 520 430 Q 560 380 580 320 Q 600 260 580 200 Q 560 150 520 130 Q 480 120 450 140 Z"
+                                              fill="#c7e8c7"
+                                              stroke="#2d5016"
+                                              strokeWidth="2"/>
+
+                                        {/* Water bodies */}
+                                        <circle cx="380" cy="280" r="15" fill="#4a90e2" opacity="0.6" />
+                                        <ellipse cx="320" cy="350" rx="25" ry="15" fill="#4a90e2" opacity="0.6" />
+
+                                        {/* Visible layers based on selection */}
+                                        {layerVisibility['Natural Heritage Areas'] && (
+                                            <>
+                                                <polygon points="350,200 380,190 390,220 360,230" fill="#90EE90" opacity="0.7" stroke="#228B22" strokeWidth="1.5" />
+                                                <text x="365" y="215" fontSize="10" fill="#1a5c1a" fontWeight="bold">NHA</text>
+                                            </>
+                                        )}
+
+                                        {layerVisibility['Special Area of Conservation'] && (
+                                            <>
+                                                <polygon points="420,300 460,290 470,330 440,340 410,320" fill="#FFD700" opacity="0.7" stroke="#DAA520" strokeWidth="2" />
+                                                <text x="430" y="320" fontSize="10" fill="#8B6914" fontWeight="bold">SAC</text>
+                                            </>
+                                        )}
+
+                                        {layerVisibility['Special Areas of Protection'] && (
+                                            <>
+                                                <polygon points="300,400 340,390 350,430 320,445" fill="#FF6B6B" opacity="0.7" stroke="#C92A2A" strokeWidth="2" />
+                                                <text x="315" y="420" fontSize="10" fill="#8B0000" fontWeight="bold">SPA</text>
+                                            </>
+                                        )}
+
+                                        {layerVisibility['Pollution Impact Potential for Nitrogen'] && (
+                                            <>
+                                                <circle cx="500" cy="250" r="40" fill="#FFA500" opacity="0.5" stroke="#FF8C00" strokeWidth="2" strokeDasharray="5,5" />
+                                                <text x="480" y="255" fontSize="9" fill="#8B4500">N Impact</text>
+                                            </>
+                                        )}
+
+                                        {layerVisibility['Pollution Impact Potential for Phosphorus'] && (
+                                            <>
+                                                <circle cx="340" cy="450" r="35" fill="#9370DB" opacity="0.5" stroke="#663399" strokeWidth="2" strokeDasharray="5,5" />
+                                                <text x="323" y="455" fontSize="9" fill="#4B0082">P Impact</text>
+                                            </>
+                                        )}
+
+                                        {/* Cork markers */}
+                                        <g transform="translate(280, 470)">
+                                            <circle r="5" fill="#E63946" stroke="white" strokeWidth="2"/>
+                                            <text x="10" y="5" fontSize="11" fill="#1a1a1a" fontWeight="600">Cork</text>
+                                        </g>
+
+                                        {/* Site markers for Cork sites */}
+                                        <g transform="translate(260, 440)">
+                                            <circle r="4" fill="#0077BE" stroke="white" strokeWidth="1.5"/>
+                                            <text x="8" y="4" fontSize="9" fill="#1a1a1a">Clonakilty Bay</text>
+                                        </g>
+
+                                        <g transform="translate(300, 450)">
+                                            <circle r="4" fill="#0077BE" stroke="white" strokeWidth="1.5"/>
+                                            <text x="8" y="4" fontSize="9" fill="#1a1a1a">Rossbehy</text>
+                                        </g>
+                                    </svg>
+                                </div>
+
+                                {/* Map controls */}
+                                <div className="absolute top-4 right-4 bg-white rounded-lg shadow-lg p-2 space-y-2">
+                                    <button className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded">
+                                        <Lucide.Plus className="w-5 h-5" />
+                                    </button>
+                                    <button className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded">
+                                        <Lucide.Minus className="w-5 h-5" />
+                                    </button>
+                                    <button className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded">
+                                        <Lucide.Home className="w-5 h-5" />
+                                    </button>
+                                </div>
+
+                                {/* Legend */}
+                                <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-lg p-3 text-xs">
+                                    <div className="font-semibold mb-2">Active Layers</div>
+                                    {visibleLayers.length === 0 ? (
+                                        <div className="text-gray-500 italic">No layers visible</div>
+                                    ) : (
+                                        <div className="space-y-1">
+                                            {layerVisibility['Natural Heritage Areas'] && (
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="w-4 h-4 bg-green-400 border border-green-600 rounded-sm"></div>
+                                                    <span>NHA</span>
+                                                </div>
+                                            )}
+                                            {layerVisibility['Special Area of Conservation'] && (
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="w-4 h-4 bg-yellow-400 border-2 border-yellow-600 rounded-sm"></div>
+                                                    <span>SAC</span>
+                                                </div>
+                                            )}
+                                            {layerVisibility['Special Areas of Protection'] && (
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="w-4 h-4 bg-red-400 border-2 border-red-700 rounded-sm"></div>
+                                                    <span>SPA</span>
+                                                </div>
+                                            )}
+                                            {layerVisibility['Pollution Impact Potential for Nitrogen'] && (
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="w-4 h-4 bg-orange-400 border border-dashed border-orange-600 rounded-full"></div>
+                                                    <span>N Impact</span>
+                                                </div>
+                                            )}
+                                            {layerVisibility['Pollution Impact Potential for Phosphorus'] && (
+                                                <div className="flex items-center space-x-2">
+                                                    <div className="w-4 h-4 bg-purple-400 border border-dashed border-purple-600 rounded-full"></div>
+                                                    <span>P Impact</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Scale bar */}
+                                <div className="absolute bottom-4 right-4 bg-white rounded px-3 py-1 shadow-lg text-xs">
+                                    <div className="flex items-center space-x-2">
+                                        <div className="w-16 h-1 bg-gray-800 border-t-2 border-b-2 border-l-2 border-r-2 border-gray-800"></div>
+                                        <span className="font-medium">50 km</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
