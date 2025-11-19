@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { ViewState, ActionCategory, ActionDetail, TeamMember } from '../types';
 import { ViewType } from '../types';
 import * as Lucide from 'lucide-react';
-import { clonakiltyBayActions, defaultDb } from '../constants';
+import { siteActionPlans, clonakiltyBayActions, defaultDb } from '../constants';
 
 const ActionStatusBadge: React.FC<{ status: 'Completed' | 'In Progress' | 'Not Started' }> = ({ status }) => {
     const statusMap = {
@@ -88,8 +88,14 @@ const ActionModal: React.FC<ActionModalProps> = ({ isOpen, onClose, onSave, acti
     );
 };
 
-const ActionDetailView: React.FC<{ setView: (view: ViewState) => void }> = ({ setView }) => {
-    const [actionPlan, setActionPlan] = useState<ActionCategory[]>(clonakiltyBayActions);
+interface ActionDetailViewProps {
+    setView: (view: ViewState) => void;
+    siteCode?: string;
+}
+
+const ActionDetailView: React.FC<ActionDetailViewProps> = ({ setView, siteCode = '91' }) => {
+    const siteData = siteActionPlans[siteCode] || siteActionPlans['91'];
+    const [actionPlan, setActionPlan] = useState<ActionCategory[]>(siteData.actions);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingState, setEditingState] = useState<{ categoryIndex: number; actionIndex?: number; action: ActionDetail | null } | null>(null);
 
@@ -125,14 +131,14 @@ const ActionDetailView: React.FC<{ setView: (view: ViewState) => void }> = ({ se
 
     return (
         <div className="p-4 md:p-8">
-            <button onClick={() => setView({ view: ViewType.Tasks })} className="text-sm text-accent mb-4 flex items-center space-x-1">
+            <button onClick={() => setView({ view: ViewType.Dashboard })} className="text-sm text-accent mb-4 flex items-center space-x-1">
                 <Lucide.ArrowLeft className="w-4 h-4" />
-                <span>Back to Tasks</span>
+                <span>Back to Dashboard</span>
             </button>
             <div className="bg-surface p-6 md:p-8 rounded-lg shadow-md">
                 <div className="border-b pb-6 mb-6">
                     <h2 className="text-3xl font-bold text-secondary">Conservation Actions</h2>
-                    <p className="text-lg text-gray-500 mt-1">Clonakilty Bay SAC (Inchydoney Island) - Site Code: 000091</p>
+                    <p className="text-lg text-gray-500 mt-1">{siteData.siteName} - Site Code: {siteCode.padStart(6, '0')}</p>
                     <div className="mt-4">
                         <div className="flex justify-between items-center mb-1">
                             <span className="text-sm font-medium text-gray-600">Overall Progress</span>

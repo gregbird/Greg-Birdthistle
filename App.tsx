@@ -284,7 +284,7 @@ const App: React.FC = () => {
           surveys={visibleSurveys}
         />;
       case ViewType.AssessmentDetail: return <AssessmentDetailView setView={setView} param={viewState.param}/>;
-      case ViewType.ActionDetail: return <ActionDetailView setView={setView} />;
+      case ViewType.ActionDetail: return <ActionDetailView setView={setView} siteCode={viewState.param?.siteCode} />;
       case ViewType.CreateAction: return <CreateActionView setView={setView} showToast={showToast} />;
       case ViewType.AuditTrail: return currentUserRole === 'parent' ? <AuditTrailView auditTrail={auditTrail} /> : <PermissionDenied />;
       case ViewType.SurveyForm: return null; // Handled separately

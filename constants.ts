@@ -281,8 +281,197 @@ export const clonakiltyBayActions: ActionCategory[] = [
   },
 ];
 
+export const dromoreWoodsActions: ActionCategory[] = [
+  {
+    name: '1. Habitat Restoration (Addressing Failed Attributes)',
+    description: 'Actions to restore woodland structure and prevent encroachment of non-native species.',
+    actions: [
+      {
+        title: '1.1 Native Tree Planting Programme',
+        objective: 'Plant native oak, ash, and birch saplings to restore natural woodland canopy structure and increase biodiversity.',
+        status: 'In Progress',
+        completionDate: '2025-11-30',
+        assignedTo: 'Liam Byrne',
+      },
+      {
+        title: '1.2 Remove Invasive Rhododendron',
+        objective: 'Systematic removal of Rhododendron ponticum which is out-competing native understory vegetation and reducing light levels.',
+        status: 'In Progress',
+        completionDate: '2025-09-15',
+        assignedTo: 'Fionnuala Gallagher',
+      },
+      {
+        title: '1.3 Restore Woodland Edge Habitats',
+        objective: 'Create graduated woodland edge with native shrubs and wildflowers to increase structural diversity.',
+        status: 'Not Started',
+        completionDate: '2026-05-01',
+        assignedTo: 'Padraig O\'Connor',
+      },
+    ],
+  },
+  {
+    name: '2. Visitor & Access Management',
+    description: 'Protect sensitive woodland areas while maintaining appropriate public access.',
+    actions: [
+      {
+        title: '2.1 Install Protective Fencing',
+        objective: 'Fence off regeneration areas and nesting sites to prevent trampling and disturbance.',
+        status: 'Completed',
+        completionDate: '2024-07-20',
+        assignedTo: 'Siobhán Kelly',
+      },
+      {
+        title: '2.2 Pathway Maintenance',
+        objective: 'Repair and maintain woodland trails to prevent erosion and guide visitors away from sensitive areas.',
+        status: 'In Progress',
+        completionDate: '2025-10-15',
+        assignedTo: 'Eoin Brennan',
+      },
+    ],
+  },
+  {
+    name: '3. Monitoring',
+    description: 'Regular assessment of woodland health and regeneration success.',
+    actions: [
+      {
+        title: '3.1 Annual Woodland Health Survey',
+        objective: 'Monitor canopy cover, understory diversity, presence of indicator species, and natural regeneration rates.',
+        status: 'Not Started',
+        completionDate: '2026-06-30',
+        assignedTo: 'Dr. Aoife Murphy',
+      },
+    ],
+  },
+];
+
+export const loughGashActions: ActionCategory[] = [
+  {
+    name: '1. Habitat Restoration (Addressing Failed Attributes)',
+    description: 'Actions to restore hydrological function and improve turlough habitat quality.',
+    actions: [
+      {
+        title: '1.1 Restore Natural Hydrology',
+        objective: 'Remove drainage modifications and restore natural water level fluctuations essential for turlough functioning.',
+        status: 'In Progress',
+        completionDate: '2025-10-30',
+        assignedTo: 'Conor Ryan',
+      },
+      {
+        title: '1.2 Implement Appropriate Grazing Regime',
+        objective: 'Introduce light winter grazing to maintain open turlough grassland and prevent scrub encroachment.',
+        status: 'Not Started',
+        completionDate: '2026-02-28',
+        assignedTo: 'Sean McCarthy',
+      },
+      {
+        title: '1.3 Control Invasive Species',
+        objective: 'Remove invasive species that threaten the unique turlough flora, particularly around the flood zone.',
+        status: 'Completed',
+        completionDate: '2024-09-10',
+        assignedTo: 'Roisin Farrell',
+      },
+    ],
+  },
+  {
+    name: '2. Visitor & Access Management',
+    description: 'Manage access to protect the delicate turlough ecosystem.',
+    actions: [
+      {
+        title: '2.1 Seasonal Access Restrictions',
+        objective: 'Implement seasonal closures during critical flooding periods to prevent disturbance to habitat and wildlife.',
+        status: 'Completed',
+        completionDate: '2024-05-15',
+        assignedTo: 'Niamh Walsh',
+      },
+    ],
+  },
+  {
+    name: '3. Monitoring',
+    description: 'Track hydrological conditions and habitat quality.',
+    actions: [
+      {
+        title: '3.1 Hydrological and Ecological Monitoring',
+        objective: 'Monitor water levels, flooding duration, vegetation composition, and presence of turlough-specific species.',
+        status: 'Not Started',
+        completionDate: '2026-12-01',
+        assignedTo: 'Ciara Moore',
+      },
+    ],
+  },
+];
+
+export const pouladatigCaveActions: ActionCategory[] = [
+  {
+    name: '1. Habitat Restoration (Addressing Failed Attributes)',
+    description: 'Actions to protect cave habitat and maintain suitable conditions for bat populations.',
+    actions: [
+      {
+        title: '1.1 Maintain Cave Microclimate',
+        objective: 'Ensure stable temperature and humidity levels by controlling access points and preventing unauthorised entry.',
+        status: 'Completed',
+        completionDate: '2024-04-20',
+        assignedTo: 'Aoife Doyle',
+      },
+      {
+        title: '1.2 Restore Surface Habitat',
+        objective: 'Restore woodland and scrub around cave entrance to provide foraging habitat for bat populations.',
+        status: 'In Progress',
+        completionDate: '2025-08-30',
+        assignedTo: 'Tadhg Kennedy',
+      },
+      {
+        title: '1.3 Install Bat-Friendly Gating',
+        objective: 'Replace inadequate barriers with bat-friendly gates that allow bat access while preventing human disturbance.',
+        status: 'In Progress',
+        completionDate: '2025-12-15',
+        assignedTo: 'Deirdre Healy',
+      },
+    ],
+  },
+  {
+    name: '2. Visitor & Access Management',
+    description: 'Strict access control to protect sensitive cave ecosystem.',
+    actions: [
+      {
+        title: '2.1 Implement Permit System',
+        objective: 'Establish controlled access permit system for educational and research visits only.',
+        status: 'Completed',
+        completionDate: '2024-03-10',
+        assignedTo: 'Shane Power',
+      },
+      {
+        title: '2.2 Install Warning Signage',
+        objective: 'Place clear signage explaining the ecological importance and legal protection of the site.',
+        status: 'Completed',
+        completionDate: '2024-03-25',
+        assignedTo: 'Orla Murray',
+      },
+    ],
+  },
+  {
+    name: '3. Monitoring',
+    description: 'Regular monitoring of bat populations and cave conditions.',
+    actions: [
+      {
+        title: '3.1 Annual Bat Population Survey',
+        objective: 'Conduct annual surveys to monitor bat species diversity, population sizes, and breeding success.',
+        status: 'Not Started',
+        completionDate: '2026-08-01',
+        assignedTo: 'Aoife Doyle',
+      },
+    ],
+  },
+];
+
+export const siteActionPlans: { [siteCode: string]: { siteName: string; actions: ActionCategory[] } } = {
+  '91': { siteName: 'Clonakilty Bay SAC (Inchydoney Island)', actions: clonakiltyBayActions },
+  '32': { siteName: 'Dromore Woods & Loughs', actions: dromoreWoodsActions },
+  '51': { siteName: 'Lough Gash Turlough SAC', actions: loughGashActions },
+  '37': { siteName: 'Pouladatig Cave', actions: pouladatigCaveActions },
+};
+
 export const actionTypes: string[] = [
-  'Scrub Removal', 'Grazing Management', 'Visitor Management', 'Path Repair', 
+  'Scrub Removal', 'Grazing Management', 'Visitor Management', 'Path Repair',
   'Species Monitoring', 'Hydrological Works', 'Invasive Species Control', 'Other'
 ];
 

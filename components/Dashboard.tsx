@@ -115,25 +115,30 @@ const ActionsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRo
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                        {actionsData.map((row, index) => (
-                            <tr
-                                key={index}
-                                className={
-                                    row.SITECODE === '91'
-                                    ? "cursor-pointer hover:bg-blue-50"
-                                    : "hover:bg-gray-50"
-                                }
-                                onClick={() => {
-                                    if (row.SITECODE === '91') setView({ view: ViewType.ActionDetail, param: { siteCode: 91 } });
-                                }}
-                            >
-                                <td className="p-2">{row.SITECODE}</td>
-                                <td className="p-2 font-medium text-secondary">{row.SITE_NAME}</td>
-                                <td className="p-2"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColorClass(row.Status)}`}>{row.Status}</span></td>
-                                <td className="p-2">{row.ActionType}</td>
-                                <td className="p-2">{row.COUNTY}</td>
-                            </tr>
-                        ))}
+                        {actionsData.map((row, index) => {
+                            const hasActionPlan = ['91', '32', '51', '37'].includes(row.SITECODE);
+                            return (
+                                <tr
+                                    key={index}
+                                    className={
+                                        hasActionPlan
+                                        ? "cursor-pointer hover:bg-blue-50"
+                                        : "hover:bg-gray-50"
+                                    }
+                                    onClick={() => {
+                                        if (hasActionPlan) {
+                                            setView({ view: ViewType.ActionDetail, param: { siteCode: row.SITECODE } });
+                                        }
+                                    }}
+                                >
+                                    <td className="p-2">{row.SITECODE}</td>
+                                    <td className="p-2 font-medium text-secondary">{row.SITE_NAME}</td>
+                                    <td className="p-2"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColorClass(row.Status)}`}>{row.Status}</span></td>
+                                    <td className="p-2">{row.ActionType}</td>
+                                    <td className="p-2">{row.COUNTY}</td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
