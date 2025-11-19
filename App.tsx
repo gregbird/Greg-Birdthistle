@@ -18,6 +18,7 @@ import CreateActionView from './components/CreateAction';
 import FieldSurveyView from './components/FieldSurvey';
 import ImpactCalculationView from './components/ImpactCalculation';
 import AuditTrailView from './components/AuditTrail';
+import OnboardingTutorial from './components/OnboardingTutorial';
 
 // --- Helper Hook for Local Storage ---
 function useLocalStorage<T,>(key: string, initialValue: T): [T, (value: T) => void] {
@@ -183,6 +184,7 @@ const App: React.FC = () => {
   const [viewState, setViewState] = useState<ViewState>({ view: ViewType.Dashboard });
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
   const [currentUserRole, setCurrentUserRole] = useLocalStorage<'parent' | 'child'>('dulraUserRole', 'parent');
+  const [showOnboarding, setShowOnboarding] = useLocalStorage('dulraOnboardingCompleted', false);
 
   // Modal States
   const [newSurveyModal, setNewSurveyModal] = useState<{show: boolean, templateId: string | null}>({show: false, templateId: null});
@@ -313,7 +315,8 @@ const App: React.FC = () => {
       {newSurveyModal.show && <NewSurveyModal createSurvey={createNewSurvey} closeModal={() => setNewSurveyModal({show: false, templateId: null})} />}
       {assignSurveyModal.show && <AssignSurveyModal surveyId={assignSurveyModal.surveyId!} closeModal={() => setAssignSurveyModal({show: false, surveyId: null})} showToast={showToast} />}
       {thirdPartyModal.show && <ThirdPartyModal link={thirdPartyModal.link} setLink={(link) => setThirdPartyModal({show:true, link})} closeModal={() => setThirdPartyModal({show: false, link: null})} showToast={showToast} />}
-      
+      {!showOnboarding && currentUserRole === 'child' && <OnboardingTutorial onComplete={() => setShowOnboarding(true)} />}
+
       <Toast toast={toast} hide={() => setToast({ ...toast, show: false })} />
     </div>
   );

@@ -4,6 +4,7 @@ import type { ViewState } from '../types';
 import { ViewType } from '../types';
 import { assessmentsCsvData, actionsCsvData } from '../constants';
 import { parseCsv, getStatusColorClass, registerChartPlugins } from '../services';
+import WorkflowDashboard from './WorkflowDashboard';
 
 // Declare Chart.js from CDN
 declare var Chart: any;
@@ -203,7 +204,7 @@ const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) =
     const [activeTab, setActiveTab] = React.useState('assessments');
 
     if (currentUserRole === 'child') {
-        return <MyTasksView setView={setView} />;
+        return <WorkflowDashboard setView={setView} />;
     }
 
     const chartOptions = {

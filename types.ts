@@ -158,3 +158,104 @@ export interface SiteAssessment {
     managementIssues: string[];
     conservationObjectives: string[];
 }
+
+// Workflow Management Types
+export type WorkflowStepStatus = 'not_started' | 'in_progress' | 'completed' | 'needs_review' | 'blocked';
+export type WorkflowPhase = 'desk_research' | 'field_research' | 'reporting';
+
+export interface WorkflowStep {
+    id: string;
+    name: string;
+    description: string;
+    phase: WorkflowPhase;
+    status: WorkflowStepStatus;
+    dependencies: string[]; // IDs of steps that must be completed first
+    assignedTo?: string;
+    startedAt?: string;
+    completedAt?: string;
+    dataVersion?: string;
+    outputs?: string[]; // IDs of data products generated
+    validationErrors?: string[];
+}
+
+export interface WorkflowTemplate {
+    id: string;
+    name: string;
+    description: string;
+    steps: WorkflowStep[];
+}
+
+export interface AssessmentWorkflow {
+    id: string;
+    assessmentId: string;
+    siteCode: string;
+    siteName: string;
+    templateId: string;
+    status: 'not_started' | 'in_progress' | 'completed';
+    currentPhase: WorkflowPhase;
+    steps: WorkflowStep[];
+    createdAt: string;
+    updatedAt: string;
+    assignedTo: string;
+    assignedBy: string;
+    dueDate: string;
+}
+
+export interface DataSource {
+    id: string;
+    name: string;
+    type: 'gis' | 'climate' | 'species' | 'survey' | 'external';
+    version: string;
+    lastUpdated: string;
+    url?: string;
+    metadata: Record<string, any>;
+}
+
+export interface DataDependency {
+    stepId: string;
+    dataSourceId: string;
+    requiredVersion?: string;
+    lastValidated?: string;
+}
+
+export interface ValidationRule {
+    id: string;
+    name: string;
+    description: string;
+    field: string;
+    rule: 'required' | 'range' | 'format' | 'custom';
+    params?: Record<string, any>;
+    errorMessage: string;
+}
+
+export interface QualityCheckResult {
+    passed: boolean;
+    errors: string[];
+    warnings: string[];
+    timestamp: string;
+    checkedBy: string;
+}
+
+export interface AssessmentVersion {
+    id: string;
+    assessmentId: string;
+    version: number;
+    createdAt: string;
+    createdBy: string;
+    changes: string[];
+    data: Record<string, any>;
+    dataSources: DataSource[];
+}
+
+export interface BatchOperation {
+    id: string;
+    type: 'assessment' | 'report' | 'analysis';
+    status: 'queued' | 'processing' | 'completed' | 'failed';
+    progress: number;
+    totalItems: number;
+    completedItems: number;
+    startedAt?: string;
+    completedAt?: string;
+    results?: any[];
+    errors?: string[];
+}
