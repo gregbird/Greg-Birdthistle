@@ -299,21 +299,31 @@ const MyTasksView: React.FC<{ setView: (view: ViewState) => void }> = ({ setView
             id: 1,
             site: 'Clonakilty Bay SAC',
             siteCode: '91',
+            county: 'Cork',
             type: 'Assessment',
             status: 'In Progress',
             phase: 'Desk Research',
+            assignedBy: 'Dr. Sarah Murphy',
+            assignedDate: '2025-11-15',
             dueDate: '2025-12-01',
-            description: 'Complete habitat assessment and data collection'
+            description: 'Complete habitat assessment and data collection for SAC monitoring',
+            completedSteps: ['GIS Review', 'Background Research'],
+            nextSteps: ['Complete Data Mine', 'Schedule Field Visit']
         },
         {
             id: 2,
             site: 'Rossbehy SAC',
             siteCode: '13',
+            county: 'Kerry',
             type: 'Assessment',
             status: 'Not Started',
             phase: 'Not Started',
+            assignedBy: 'Dr. Sarah Murphy',
+            assignedDate: '2025-11-18',
             dueDate: '2025-12-15',
-            description: 'Conduct ecological impact assessment'
+            description: 'Conduct ecological impact assessment for coastal habitat',
+            completedSteps: [],
+            nextSteps: ['Start with GIS Mapping', 'Run Data Mine Search', 'Review Background Data']
         }
     ];
 
@@ -341,11 +351,51 @@ const MyTasksView: React.FC<{ setView: (view: ViewState) => void }> = ({ setView
 
     return (
         <div className="p-4 md:p-8">
-            <h2 className="text-3xl font-bold text-secondary mb-6">My Tasks</h2>
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-secondary">My Assigned Tasks</h2>
+                <div className="flex items-center space-x-2 text-sm text-gray-600">
+                    <Lucide.User className="w-4 h-4" />
+                    <span>Cian O'Donnell</span>
+                </div>
+            </div>
+
+            {/* Summary Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-600 mb-1">Total Assignments</p>
+                            <p className="text-2xl font-bold text-secondary">{tasks.length}</p>
+                        </div>
+                        <Lucide.Briefcase className="w-8 h-8 text-blue-500" />
+                    </div>
+                </div>
+                <div className="bg-orange-50 border-l-4 border-orange-500 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-600 mb-1">In Progress</p>
+                            <p className="text-2xl font-bold text-secondary">{tasks.filter(t => t.status === 'In Progress').length}</p>
+                        </div>
+                        <Lucide.Clock className="w-8 h-8 text-orange-500" />
+                    </div>
+                </div>
+                <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-gray-600 mb-1">Due This Week</p>
+                            <p className="text-2xl font-bold text-secondary">{tasks.filter(t => new Date(t.dueDate) <= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)).length}</p>
+                        </div>
+                        <Lucide.Calendar className="w-8 h-8 text-green-500" />
+                    </div>
+                </div>
+            </div>
 
             {/* Workflow Guide */}
             <div className="bg-gradient-to-r from-blue-50 to-green-50 p-6 rounded-lg shadow-md mb-6">
-                <h3 className="text-lg font-semibold text-secondary mb-4">Assessment Workflow</h3>
+                <h3 className="text-lg font-semibold text-secondary mb-4 flex items-center space-x-2">
+                    <Lucide.Route className="w-5 h-5" />
+                    <span>Assessment Workflow Guide</span>
+                </h3>
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center space-x-3">
                         <div className="bg-blue-500 text-white rounded-full p-3">
@@ -385,51 +435,131 @@ const MyTasksView: React.FC<{ setView: (view: ViewState) => void }> = ({ setView
                     const PhaseIcon = getPhaseIcon(task.phase);
                     const nextAction = getNextAction(task.phase);
                     const NextActionIcon = nextAction.icon;
+                    const progressPercentage = task.phase === 'Not Started' ? 0 : task.phase === 'Desk Research' ? 33 : task.phase === 'Field Research' ? 66 : 100;
 
                     return (
-                        <div key={task.id} className="bg-surface p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                                <div className="flex-1">
-                                    <div className="flex items-start justify-between mb-2">
-                                        <div>
-                                            <h3 className="text-xl font-semibold text-secondary">{task.site}</h3>
-                                            <p className="text-sm text-gray-500">Site Code: {task.siteCode}</p>
+                        <div key={task.id} className="bg-surface rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-200">
+                            {/* Task Header */}
+                            <div className="bg-gradient-to-r from-gray-50 to-white p-4 border-b border-gray-200 rounded-t-lg">
+                                <div className="flex items-start justify-between">
+                                    <div className="flex-1">
+                                        <div className="flex items-center space-x-3 mb-2">
+                                            <h3 className="text-xl font-bold text-secondary">{task.site}</h3>
+                                            <span className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColorClass(task.status)}`}>
+                                                {task.status}
+                                            </span>
                                         </div>
-                                        <span className={`text-xs font-medium px-3 py-1 rounded-full ${getStatusColorClass(task.status)}`}>
-                                            {task.status}
-                                        </span>
-                                    </div>
-                                    <p className="text-gray-600 mb-3">{task.description}</p>
-                                    <div className="flex flex-wrap items-center gap-4 text-sm">
-                                        <div className="flex items-center space-x-2">
-                                            <PhaseIcon className="w-4 h-4 text-accent" />
-                                            <span className="font-medium">Current Phase:</span>
-                                            <span className="text-gray-600">{task.phase}</span>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <Lucide.Calendar className="w-4 h-4 text-accent" />
-                                            <span className="font-medium">Due:</span>
-                                            <span className="text-gray-600">{new Date(task.dueDate).toLocaleDateString('en-IE')}</span>
+                                        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600">
+                                            <div className="flex items-center space-x-1">
+                                                <Lucide.Hash className="w-4 h-4" />
+                                                <span>Site Code: <strong>{task.siteCode}</strong></span>
+                                            </div>
+                                            <div className="flex items-center space-x-1">
+                                                <Lucide.MapPin className="w-4 h-4" />
+                                                <span>{task.county}</span>
+                                            </div>
+                                            <div className="flex items-center space-x-1">
+                                                <Lucide.UserCheck className="w-4 h-4" />
+                                                <span>Assigned by: {task.assignedBy}</span>
+                                            </div>
+                                            <div className="flex items-center space-x-1">
+                                                <Lucide.CalendarDays className="w-4 h-4" />
+                                                <span>Assigned: {new Date(task.assignedDate).toLocaleDateString('en-IE')}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex flex-col space-y-2">
+                            </div>
+
+                            {/* Task Body */}
+                            <div className="p-6">
+                                <p className="text-gray-700 mb-4">{task.description}</p>
+
+                                {/* Progress Bar */}
+                                <div className="mb-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-sm font-medium text-gray-700">Progress</span>
+                                        <span className="text-sm font-medium text-gray-700">{progressPercentage}%</span>
+                                    </div>
+                                    <div className="w-full bg-gray-200 rounded-full h-2">
+                                        <div
+                                            className="bg-accent h-2 rounded-full transition-all duration-300"
+                                            style={{ width: `${progressPercentage}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                {/* Current Phase */}
+                                <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-4">
+                                    <div className="flex items-center space-x-2 mb-2">
+                                        <PhaseIcon className="w-5 h-5 text-blue-600" />
+                                        <span className="font-semibold text-gray-900">Current Phase: {task.phase}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                        <Lucide.Calendar className="w-4 h-4" />
+                                        <span>Due: <strong>{new Date(task.dueDate).toLocaleDateString('en-IE', { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}</strong></span>
+                                    </div>
+                                </div>
+
+                                {/* Progress Details */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                    {task.completedSteps.length > 0 && (
+                                        <div className="bg-green-50 p-4 rounded-lg">
+                                            <div className="flex items-center space-x-2 mb-2">
+                                                <Lucide.CheckCircle className="w-5 h-5 text-green-600" />
+                                                <span className="font-semibold text-gray-900">Completed</span>
+                                            </div>
+                                            <ul className="space-y-1">
+                                                {task.completedSteps.map((step, idx) => (
+                                                    <li key={idx} className="text-sm text-gray-700 flex items-center space-x-2">
+                                                        <Lucide.Check className="w-4 h-4 text-green-600" />
+                                                        <span>{step}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                    <div className="bg-orange-50 p-4 rounded-lg">
+                                        <div className="flex items-center space-x-2 mb-2">
+                                            <Lucide.ListTodo className="w-5 h-5 text-orange-600" />
+                                            <span className="font-semibold text-gray-900">Next Steps</span>
+                                        </div>
+                                        <ul className="space-y-1">
+                                            {task.nextSteps.map((step, idx) => (
+                                                <li key={idx} className="text-sm text-gray-700 flex items-center space-x-2">
+                                                    <Lucide.Circle className="w-3 h-3 text-orange-600" />
+                                                    <span>{step}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                {/* Actions */}
+                                <div className="flex flex-wrap gap-3">
                                     <button
                                         onClick={() => setView({ view: nextAction.view, param: { siteCode: task.siteCode } })}
-                                        className="bg-accent text-white py-2 px-6 rounded-md hover:brightness-95 flex items-center justify-center space-x-2 whitespace-nowrap"
+                                        className="bg-accent text-white py-2.5 px-6 rounded-md hover:brightness-95 flex items-center space-x-2 font-medium shadow-sm"
                                     >
-                                        <NextActionIcon className="w-4 h-4" />
+                                        <NextActionIcon className="w-5 h-5" />
                                         <span>{nextAction.text}</span>
                                     </button>
                                     {task.phase !== 'Not Started' && (
                                         <button
                                             onClick={() => setView({ view: ViewType.AssessmentDetail, param: { siteCode: task.siteCode } })}
-                                            className="bg-gray-200 text-gray-700 py-2 px-6 rounded-md hover:bg-gray-300 flex items-center justify-center space-x-2 whitespace-nowrap"
+                                            className="bg-gray-200 text-gray-700 py-2.5 px-6 rounded-md hover:bg-gray-300 flex items-center space-x-2 font-medium shadow-sm"
                                         >
-                                            <Lucide.Eye className="w-4 h-4" />
-                                            <span>View Details</span>
+                                            <Lucide.Eye className="w-5 h-5" />
+                                            <span>View Full Assessment</span>
                                         </button>
                                     )}
+                                    <button
+                                        onClick={() => setView({ view: ViewType.Tasks })}
+                                        className="bg-white border border-gray-300 text-gray-700 py-2.5 px-6 rounded-md hover:bg-gray-50 flex items-center space-x-2 font-medium shadow-sm"
+                                    >
+                                        <Lucide.Info className="w-5 h-5" />
+                                        <span>Site Status</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
