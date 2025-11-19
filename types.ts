@@ -123,3 +123,38 @@ export interface SFA_Result {
     failedCriteriaCount: number;
     totalAreaInPoorCondition: number;
 }
+
+export interface HabitatAssessment {
+    code: string;
+    name: string;
+    area: string;
+    range: 'Favourable' | 'Inadequate' | 'Bad';
+    areaStatus: 'Favourable' | 'Inadequate' | 'Bad';
+    structureAndFunctions: 'Favourable' | 'Inadequate' | 'Bad';
+    futureProspects: 'Favourable' | 'Inadequate' | 'Bad';
+    overallStatus: 'Favourable' | 'Inadequate' | 'Bad';
+    notes: string;
+}
+
+export interface SpeciesAssessment {
+    name: string;
+    scientificName: string;
+    population: 'Favourable' | 'Inadequate' | 'Bad';
+    habitat: 'Favourable' | 'Inadequate' | 'Bad';
+    futureProspects: 'Favourable' | 'Inadequate' | 'Bad';
+    overallStatus: 'Favourable' | 'Inadequate' | 'Bad';
+    notes: string;
+}
+
+export interface SiteAssessment {
+    siteName: string;
+    siteCode: string;
+    county: string;
+    area: string;
+    description: string;
+    mapUrl: string;
+    habitats: HabitatAssessment[];
+    species: SpeciesAssessment[];
+    managementIssues: string[];
+    conservationObjectives: string[];
+}

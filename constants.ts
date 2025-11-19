@@ -1,4 +1,4 @@
-import type { SurveyTemplate, TeamMember, Survey, Project, ActionCategory, SFA_HabitatAssessmentRules, AuditEntry } from './types';
+import type { SurveyTemplate, TeamMember, Survey, Project, ActionCategory, SFA_HabitatAssessmentRules, AuditEntry, SiteAssessment } from './types';
 
 export const surveyTemplates: SurveyTemplate[] = [
     { id: "PEA", name: "Preliminary Ecological Appraisal", description: "Phase 1 Habitat Survey to provide a baseline ecological assessment of a site, identifying key habitats and potential constraints.", icon: "ClipboardList" },
@@ -468,6 +468,369 @@ export const siteActionPlans: { [siteCode: string]: { siteName: string; actions:
   '32': { siteName: 'Dromore Woods & Loughs', actions: dromoreWoodsActions },
   '51': { siteName: 'Lough Gash Turlough SAC', actions: loughGashActions },
   '37': { siteName: 'Pouladatig Cave', actions: pouladatigCaveActions },
+};
+
+export const clonakiltyBayAssessment: SiteAssessment = {
+  siteName: 'Clonakilty Bay SAC (Inchydoney Island)',
+  siteCode: '91',
+  county: 'Cork',
+  area: '87.4 ha',
+  description: 'Clonakilty Bay SAC comprises a coastal sand dune system on Inchydoney Island, located approximately 3km south of Clonakilty town. The site features a series of fixed and mobile dunes with associated dune slacks and embryonic shifting dunes. The area is subject to moderate recreational pressure, with beach access points and informal pathways throughout the dune system.',
+  mapUrl: 'https://placehold.co/600x400/e2e8f0/475569?text=Clonakilty+Bay+Overview+Map',
+  habitats: [
+    {
+      code: '2130',
+      name: 'Fixed coastal dunes with herbaceous vegetation (* priority habitat)',
+      area: '52.3 ha',
+      range: 'Favourable',
+      areaStatus: 'Inadequate',
+      structureAndFunctions: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Area loss due to scrub encroachment (bramble, gorse) covering approximately 15% of the habitat. Insufficient bare ground (<5% observed vs. 10-50% target). Vegetation structure shows limited diversity with dominant grasses suppressing typical dune flora. Positive indicators include presence of characteristic species and low non-native species cover.'
+    },
+    {
+      code: '2110',
+      name: 'Embryonic shifting dunes',
+      area: '18.6 ha',
+      range: 'Favourable',
+      areaStatus: 'Favourable',
+      structureAndFunctions: 'Favourable',
+      futureProspects: 'Favourable',
+      overallStatus: 'Favourable',
+      notes: 'Well-developed embryonic dunes with typical pioneer vegetation including Elymus farctus and Ammophila arenaria. Natural dynamic processes ongoing with active sand accretion. Limited trampling impact observed only at designated access points.'
+    },
+    {
+      code: '1330',
+      name: 'Atlantic salt meadows',
+      area: '16.5 ha',
+      range: 'Favourable',
+      areaStatus: 'Favourable',
+      structureAndFunctions: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Saltmarsh shows signs of under-grazing with rank vegetation in upper zones. Sward height exceeds optimal range in 30% of the area. Some erosion along creek edges. Species composition remains largely intact with good representation of typical saltmarsh communities.'
+    }
+  ],
+  species: [
+    {
+      name: 'Ringed Plover',
+      scientificName: 'Charadrius hiaticula',
+      population: 'Inadequate',
+      habitat: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Population estimate: 4-6 breeding pairs (below favorable reference value of 10+ pairs). Breeding success impacted by recreational disturbance during nesting season. Suitable nesting habitat reduced due to vegetation encroachment on upper beach areas.'
+    },
+    {
+      name: 'Light-bellied Brent Goose',
+      scientificName: 'Branta bernicla hrota',
+      population: 'Favourable',
+      habitat: 'Favourable',
+      futureProspects: 'Favourable',
+      overallStatus: 'Favourable',
+      notes: 'Winter population regularly exceeds 200 individuals. Saltmarsh feeding areas remain in good condition. No significant threats identified to wintering population.'
+    }
+  ],
+  managementIssues: [
+    'Scrub encroachment (bramble, gorse) on fixed dune habitats reducing characteristic open dune vegetation',
+    'Insufficient grazing pressure leading to rank vegetation on saltmarsh and loss of bare ground on dunes',
+    'Informal pathway network causing localized trampling and vegetation damage',
+    'Recreational disturbance to breeding birds during peak visitor season (May-August)',
+    'Lack of signage to guide visitors and protect sensitive areas'
+  ],
+  conservationObjectives: [
+    'Restore area of fixed dune habitat (2130) through scrub management to achieve 95% of baseline extent',
+    'Maintain embryonic dunes (2110) in favorable condition through natural processes',
+    'Improve structure and functions of saltmarsh (1330) through appropriate grazing management',
+    'Increase Ringed Plover breeding population to favorable reference value through habitat improvement and disturbance reduction',
+    'Maintain Light-bellied Brent Goose winter population above 200 individuals'
+  ]
+};
+
+export const dromoreWoodsAssessment: SiteAssessment = {
+  siteName: 'Dromore Woods & Loughs',
+  siteCode: '32',
+  county: 'Cork',
+  area: '423.8 ha',
+  description: 'Dromore Woods & Loughs SAC is a large complex site comprising ancient oak-ash woodland, two oligotrophic lakes, and associated wetland habitats. Located 8km northwest of Kenmare, the site represents one of the most significant examples of native woodland in Southwest Ireland. The woodland shows a diverse age structure with some veteran trees over 300 years old.',
+  mapUrl: 'https://placehold.co/600x400/e2e8f0/475569?text=Dromore+Woods+Overview+Map',
+  habitats: [
+    {
+      code: '91A0',
+      name: 'Old sessile oak woods with Ilex and Blechnum',
+      area: '287.3 ha',
+      range: 'Favourable',
+      areaStatus: 'Favourable',
+      structureAndFunctions: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Woodland extent is stable but regeneration is severely impacted by deer browsing. Ground flora shows poor regeneration with <5% of quadrats containing tree seedlings. Canopy structure remains good with diverse age classes. Invasive Rhododendron ponticum present in approximately 8% of woodland area, spreading from historical plantings. Veteran tree component well-represented.'
+    },
+    {
+      code: '3110',
+      name: 'Oligotrophic waters containing very few minerals',
+      area: '92.4 ha',
+      range: 'Favourable',
+      areaStatus: 'Favourable',
+      structureAndFunctions: 'Favourable',
+      futureProspects: 'Favourable',
+      overallStatus: 'Favourable',
+      notes: 'Water quality remains excellent with oligotrophic status maintained. Aquatic vegetation communities typical and well-developed. No evidence of eutrophication. Fish populations healthy including Arctic charr.'
+    },
+    {
+      code: '7140',
+      name: 'Transition mires and quaking bogs',
+      area: '44.1 ha',
+      range: 'Favourable',
+      areaStatus: 'Favourable',
+      structureAndFunctions: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Hydrology partially impacted by historic drainage. Some areas showing signs of drying with scrub encroachment (willow, birch). Sphagnum cover reduced to 40-50% in affected areas (target >70%). Characteristic species assemblage still present but under pressure.'
+    }
+  ],
+  species: [
+    {
+      name: 'Lesser Horseshoe Bat',
+      scientificName: 'Rhinolophus hipposideros',
+      population: 'Favourable',
+      habitat: 'Favourable',
+      futureProspects: 'Favourable',
+      overallStatus: 'Favourable',
+      notes: 'Maternity roost contains 120-150 individuals. Foraging habitat (woodland edge, riparian zones) in excellent condition. No threats identified. Population stable/increasing based on long-term monitoring data.'
+    },
+    {
+      name: 'Otter',
+      scientificName: 'Lutra lutra',
+      population: 'Favourable',
+      habitat: 'Favourable',
+      futureProspects: 'Favourable',
+      overallStatus: 'Favourable',
+      notes: 'Strong signs of otter presence on both loughs and connecting streams. Holts and resting places well-distributed. Fish prey populations healthy.'
+    },
+    {
+      name: 'Kerry Slug',
+      scientificName: 'Geomalacus maculosus',
+      population: 'Favourable',
+      habitat: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Population appears viable but habitat quality declining due to Rhododendron invasion altering woodland structure and bryophyte communities. Found on veteran oaks and woodland boulders. Habitat suitability reduced in areas with dense Rhododendron cover.'
+    }
+  ],
+  managementIssues: [
+    'Rhododendron ponticum invasion covering 8% of woodland, spreading rapidly and outcompeting native flora',
+    'Excessive deer browsing preventing woodland regeneration and ground flora development',
+    'Historic drainage impacts on transition mire hydrology leading to drying and scrub encroachment',
+    'Lack of active management to maintain open mire areas',
+    'Unauthorized trail development causing soil compaction and disturbance to sensitive areas'
+  ],
+  conservationObjectives: [
+    'Eradicate Rhododendron ponticum from woodland through systematic removal program',
+    'Implement deer management to reduce browsing pressure and enable natural regeneration',
+    'Restore transition mire hydrology through drain blocking and scrub management',
+    'Maintain oligotrophic lake water quality through catchment protection',
+    'Protect Lesser Horseshoe Bat maternity roost and maintain foraging habitat connectivity'
+  ]
+};
+
+export const loughGashAssessment: SiteAssessment = {
+  siteName: 'Lough Gash Turlough SAC',
+  siteCode: '51',
+  county: 'Cork',
+  area: '53.2 ha',
+  description: 'Lough Gash is a turlough (seasonal lake) located 5km northeast of Newmarket, representing one of the southernmost examples of this rare karst wetland habitat type in Ireland. The site floods during winter months through groundwater upwelling and drains completely in summer, creating a unique habitat supporting specialized plant and invertebrate communities.',
+  mapUrl: 'https://placehold.co/600x400/e2e8f0/475569?text=Lough+Gash+Overview+Map',
+  habitats: [
+    {
+      code: '3180',
+      name: 'Turloughs (* priority habitat)',
+      area: '37.6 ha',
+      range: 'Favourable',
+      areaStatus: 'Favourable',
+      structureAndFunctions: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Hydrological function maintained but vegetation zonation impacted by nutrient enrichment. Characteristic turlough flora present but reduced in abundance. Potamogeton coloratus (fen pondweed) population declined. Evidence of eutrophication with increased algal growth during wet phase. Water quality shows elevated phosphate levels (0.08mg/l vs. target <0.03mg/l). Poaching damage from livestock around margins.'
+    },
+    {
+      code: '6510',
+      name: 'Lowland hay meadows',
+      area: '15.6 ha',
+      range: 'Inadequate',
+      areaStatus: 'Inadequate',
+      structureAndFunctions: 'Bad',
+      futureProspects: 'Bad',
+      overallStatus: 'Bad',
+      notes: 'Significant habitat degradation due to agricultural intensification. Indicator species reduced to <3 species per quadrat (target >7). Ryegrass dominance >70% in most areas. Evidence of recent fertilizer application. Meadow area reduced by approximately 30% since baseline assessment. Management changed from traditional hay cutting to silage production with earlier cutting dates.'
+    }
+  ],
+  species: [
+    {
+      name: 'Whooper Swan',
+      scientificName: 'Cygnus cygnus',
+      population: 'Inadequate',
+      habitat: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Winter population reduced from 40-50 birds (2010-2015) to 15-20 birds currently. Habitat quality decline likely contributing factor. Grazing areas impacted by agricultural intensification. Birds now favoring alternative sites in the region.'
+    }
+  ],
+  managementIssues: [
+    'Nutrient enrichment of turlough from agricultural runoff, particularly phosphates',
+    'Loss of traditional hay meadow management leading to species-poor grassland',
+    'Intensified agricultural practices including fertilizer application and earlier cutting dates',
+    'Livestock poaching damage around turlough margins',
+    'Degradation of characteristic turlough vegetation zonation',
+    'Decline in turlough water quality affecting aquatic communities'
+  ],
+  conservationObjectives: [
+    'Restore turlough water quality to oligotrophic status through catchment management',
+    'Restore hay meadow habitat through cessation of fertilizer use and return to traditional management',
+    'Increase indicator species richness in meadows to target levels',
+    'Manage livestock access to prevent poaching damage while maintaining appropriate grazing pressure',
+    'Restore Whooper Swan population to favorable reference values through habitat improvement'
+  ]
+};
+
+export const pouladatigCaveAssessment: SiteAssessment = {
+  siteName: 'Pouladatig Cave SAC',
+  siteCode: '37',
+  county: 'Cork',
+  area: '2.1 ha',
+  description: 'Pouladatig Cave is a small but significant limestone cave system located 3km south of Fermoy. The cave provides important roosting habitat for Lesser Horseshoe Bats and contains well-developed cave formations. The site includes the cave entrance area with surrounding scrub and the underground passages extending approximately 250m.',
+  mapUrl: 'https://placehold.co/600x400/e2e8f0/475569?text=Pouladatig+Cave+Overview+Map',
+  habitats: [
+    {
+      code: '8310',
+      name: 'Caves not open to the public',
+      area: '0.3 ha',
+      range: 'Favourable',
+      areaStatus: 'Favourable',
+      structureAndFunctions: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Cave structure intact but disturbance issues identified. Evidence of unauthorized access with multiple impacts: graffiti on formations (5 locations), litter accumulation, and disturbance to roosting bats during sensitive periods. Temperature and humidity monitoring shows increased fluctuation due to altered air flow from enlarged entrance. Some speleothem damage documented. Cave-adapted invertebrate communities present but reduced diversity compared to historical records.'
+    },
+    {
+      code: '6210',
+      name: 'Semi-natural dry grasslands and scrubland facies on calcareous substrates',
+      area: '1.8 ha',
+      range: 'Favourable',
+      areaStatus: 'Favourable',
+      structureAndFunctions: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Calcareous grassland around cave entrance showing scrub encroachment (blackthorn, hazel) covering 40% of grassland area. Characteristic flora still present including orchids but reduced abundance. Lack of grazing management leading to structural changes. Important as foraging habitat for cave-roosting bats.'
+    }
+  ],
+  species: [
+    {
+      name: 'Lesser Horseshoe Bat',
+      scientificName: 'Rhinolophus hipposideros',
+      population: 'Inadequate',
+      habitat: 'Inadequate',
+      futureProspects: 'Inadequate',
+      overallStatus: 'Inadequate',
+      notes: 'Hibernation roost population declined from 35-40 individuals (2012-2016) to 18-22 individuals currently. Disturbance events documented during winter roost period including unauthorized cave access and photography. Cave microclimate alterations may be contributing to population decline. Foraging habitat around site being lost to scrub encroachment.'
+    }
+  ],
+  managementIssues: [
+    'Unauthorized access to cave causing direct disturbance to roosting bats and damage to cave formations',
+    'Lack of effective access control measures (gate damaged/removed)',
+    'Scrub encroachment on calcareous grassland reducing bat foraging habitat',
+    'Microclimate alterations affecting hibernation roost suitability',
+    'Litter and graffiti within cave system',
+    'Limited monitoring and surveillance of the site'
+  ],
+  conservationObjectives: [
+    'Eliminate disturbance to Lesser Horseshoe Bat hibernation roost through improved access control',
+    'Restore cave microclimate to optimal hibernation conditions',
+    'Increase hibernation roost population to favorable reference value (>30 individuals)',
+    'Maintain and enhance bat foraging habitat through scrub management in surrounding grassland',
+    'Protect cave formations from further damage',
+    'Implement regular monitoring and surveillance program'
+  ]
+};
+
+export const siteAssessments: { [siteCode: string]: SiteAssessment } = {
+  '91': clonakiltyBayAssessment,
+  '32': dromoreWoodsAssessment,
+  '51': loughGashAssessment,
+  '37': pouladatigCaveAssessment,
+  '13': {
+    siteName: 'Rossbehy',
+    siteCode: '13',
+    county: 'Kerry',
+    area: '91.71 ha',
+    description: 'Rossbehy is a large site covering almost 92ha located approximately 1.2km to the north-west of Glenbeigh, Co. Kerry, on the southern shore of Dingle Bay. The site comprises a sand spit which extends northwards into Dingle Bay and an area of saltmarsh which occurs behind (to the east of) the sand dunes.',
+    mapUrl: 'https://placehold.co/600x400/e2e8f0/475569?text=Rossbehy+Overview+Map',
+    habitats: [
+      {
+        code: '2130',
+        name: 'Fixed coastal dunes with herbaceous vegetation (* priority habitat)',
+        area: '45.2 ha',
+        range: 'Favourable',
+        areaStatus: 'Favourable',
+        structureAndFunctions: 'Favourable',
+        futureProspects: 'Favourable',
+        overallStatus: 'Favourable',
+        notes: 'Excellent example of fixed dune habitat with diverse vegetation assemblage. All assessment attributes meet favorable targets. Bare ground percentage within optimal range (15-25%). Natural dynamic processes ongoing. Minimal recreational pressure.'
+      },
+      {
+        code: '2110',
+        name: 'Embryonic shifting dunes',
+        area: '23.4 ha',
+        range: 'Favourable',
+        areaStatus: 'Favourable',
+        structureAndFunctions: 'Favourable',
+        futureProspects: 'Favourable',
+        overallStatus: 'Favourable',
+        notes: 'Well-developed embryonic dune system with active accretion. Pioneer vegetation communities intact.'
+      },
+      {
+        code: '1330',
+        name: 'Atlantic salt meadows',
+        area: '23.1 ha',
+        range: 'Favourable',
+        areaStatus: 'Favourable',
+        structureAndFunctions: 'Favourable',
+        futureProspects: 'Favourable',
+        overallStatus: 'Favourable',
+        notes: 'High-quality saltmarsh with complete zonation. Species composition excellent with all typical communities well-represented.'
+      }
+    ],
+    species: [
+      {
+        name: 'Light-bellied Brent Goose',
+        scientificName: 'Branta bernicla hrota',
+        population: 'Favourable',
+        habitat: 'Favourable',
+        futureProspects: 'Favourable',
+        overallStatus: 'Favourable',
+        notes: 'Internationally important winter population regularly exceeding 400 individuals. Feeding habitat in excellent condition.'
+      },
+      {
+        name: 'Ringed Plover',
+        scientificName: 'Charadrius hiaticula',
+        population: 'Favourable',
+        habitat: 'Favourable',
+        futureProspects: 'Favourable',
+        overallStatus: 'Favourable',
+        notes: 'Breeding population of 12-15 pairs. Nesting habitat undisturbed and in optimal condition.'
+      }
+    ],
+    managementIssues: [
+      'Low level of informal pathway use requiring monitoring',
+      'Potential future pressure from recreational activities'
+    ],
+    conservationObjectives: [
+      'Maintain all habitats in favorable conservation status',
+      'Maintain bird populations at or above current levels',
+      'Continue monitoring to detect any future pressures'
+    ]
+  }
 };
 
 export const actionTypes: string[] = [

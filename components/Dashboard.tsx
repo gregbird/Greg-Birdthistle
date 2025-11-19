@@ -52,6 +52,10 @@ const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUs
         return data;
     }, [currentUserRole]);
 
+    const hasAssessmentDetail = (siteCode: string) => {
+        return ['13', '91', '32', '51', '37'].includes(siteCode);
+    };
+
     return (
         <div className="bg-surface p-6 rounded-lg shadow-md">
             <div className="h-[calc(100vh-18rem)] overflow-y-auto pr-2">
@@ -70,13 +74,14 @@ const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUs
                             <tr
                                 key={index}
                                 className={
-                                    row.SITECODE === '13' || row.SITECODE === '91'
+                                    hasAssessmentDetail(row.SITECODE)
                                     ? "cursor-pointer hover:bg-blue-50"
                                     : "hover:bg-gray-50"
                                 }
                                 onClick={() => {
-                                    if (row.SITECODE === '13') setView({ view: ViewType.AssessmentDetail, param: { siteCode: 13 } });
-                                    if (row.SITECODE === '91') setView({ view: ViewType.ActionDetail, param: { siteCode: 91 } });
+                                    if (hasAssessmentDetail(row.SITECODE)) {
+                                        setView({ view: ViewType.AssessmentDetail, param: { siteCode: row.SITECODE } });
+                                    }
                                 }}
                             >
                                 <td className="p-2">{row.SITECODE}</td>
