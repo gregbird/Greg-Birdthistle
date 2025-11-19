@@ -48,11 +48,26 @@ const AssessmentDetailView: React.FC<AssessmentDetailViewProps> = ({ setView, pa
 
             <div className="bg-surface p-6 md:p-8 rounded-lg shadow-md">
                 <div className="border-b pb-6 mb-6">
-                    <h2 className="text-3xl font-bold text-secondary">{siteData.siteName}</h2>
-                    <div className="flex items-center space-x-3 mt-2">
-                        <span className="text-sm bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Site Code: {siteData.siteCode.padStart(6, '0')}</span>
-                        <span className="text-sm text-gray-600">County: {siteData.county}</span>
-                        <span className="text-sm text-gray-600">Area: {siteData.area}</span>
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <h2 className="text-3xl font-bold text-secondary">{siteData.siteName}</h2>
+                            <div className="flex items-center space-x-3 mt-2">
+                                <span className="text-sm bg-gray-200 text-gray-600 px-2 py-1 rounded-full">Site Code: {siteData.siteCode.padStart(6, '0')}</span>
+                                <span className="text-sm text-gray-600">County: {siteData.county}</span>
+                                <span className="text-sm text-gray-600">Area: {siteData.area}</span>
+                            </div>
+                        </div>
+                        {siteData.siteCode === '13' && (
+                            <a
+                                href="https://www.npws.ie/sites/default/files/protected-sites/conservation_objectives/CO000364.pdf"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center space-x-2 px-4 py-2 bg-accent text-white rounded-md hover:bg-accent-dark transition-colors text-sm font-medium"
+                            >
+                                <Lucide.FileText className="w-4 h-4" />
+                                <span>View Full Report (PDF)</span>
+                            </a>
+                        )}
                     </div>
                 </div>
 
