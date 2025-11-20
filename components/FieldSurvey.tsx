@@ -28,11 +28,13 @@ interface FieldSurveyViewProps {
     teamMembers: TeamMember[];
 }
 
-const FieldSurveyView: React.FC<FieldSurveyViewProps> = () => {
+const FieldSurveyView: React.FC<FieldSurveyViewProps> = ({ showToast }) => {
     // State for each section with initial values from the screenshot
     const [habitats, setHabitats] = useState<HabitatEntry[]>([{ code: 'e.g., GS2', name: 'e.g., Dry meadows', notes: '' }]);
     const [fauna, setFauna] = useState<FaunaEntry[]>([{ species: 'e.g., Otter', number: '1', evidence: 'e.g., Spraint', notes: '' }]);
     const [flora, setFlora] = useState<FloraEntry[]>([{ species: '', dafor: 'O' }]);
+    const [showSendModal, setShowSendModal] = useState(false);
+    const [phoneNumber, setPhoneNumber] = useState('');
 
     // Generic handler for array state updates
     const handleArrayChange = <T,>(
@@ -64,10 +66,37 @@ const FieldSurveyView: React.FC<FieldSurveyViewProps> = () => {
         { value: 'R', label: 'Rare' },
     ];
 
+    const handleSendToPhone = () => {
+        if (!phoneNumber) {
+            showToast('Please enter a phone number', 'error');
+            return;
+        }
+
+        // Generate mobile survey link
+        const surveyLink = `${window.location.origin}/mobile-survey?survey=field-survey-001`;
+
+        // Simulate sending SMS
+        showToast(`Survey link sent to ${phoneNumber} via SMS`, 'success');
+        setShowSendModal(false);
+        setPhoneNumber('');
+    };
+
     return (
         <div className="p-4 md:p-8">
-            <h2 className="text-3xl font-bold text-secondary mb-1">Field Survey Editor</h2>
-            <p className="text-gray-500 mb-6">Enter and manage field survey data directly into the system.</p>
+            <div className="flex justify-between items-start mb-1">
+                <div>
+                    <h2 className="text-3xl font-bold text-secondary">Field Survey Editor</h2>
+                    <p className="text-gray-500 mt-1">Enter and manage field survey data directly into the system.</p>
+                </div>
+                <button
+                    onClick={() => setShowSendModal(true)}
+                    className="bg-accent text-white py-2 px-4 rounded-md hover:bg-orange-500 flex items-center space-x-2"
+                >
+                    <Lucide.Smartphone className="w-5 h-5" />
+                    <span>Send to Mobile</span>
+                </button>
+            </div>
+            <div className="mb-6"></div>
             <div className="bg-surface p-6 md:p-8 rounded-lg shadow-md space-y-8">
                 {/* Survey Details */}
                 <div>
@@ -244,6 +273,66 @@ const FieldSurveyView: React.FC<FieldSurveyViewProps> = () => {
                     <textarea className="w-full mt-4 p-3 border rounded-md focus:ring-accent focus:border-accent bg-white" rows={8} placeholder="Enter general field notes, observations, or constraints..."></textarea>
                 </div>
             </div>
+
+            {/* Send to Mobile Modal */}
+            {showSendModal && (
+                <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4" onClick={() => setShowSendModal(false)}>
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+                        <div className="p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-xl font-bold text-secondary flex items-center">
+                                    <Lucide.Smartphone className="w-6 h-6 mr-2 text-accent" />
+                                    Send to Mobile Device
+                                </h3>
+                                <button onClick={() => setShowSendModal(false)} className="text-gray-500 hover:text-gray-700">
+                                    <Lucide.X className="w-5 h-5" />
+                                </button>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-4">
+                                Enter a mobile phone number to receive an SMS with a link to complete this survey on a mobile device in the field.
+                            </p>
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Mobile Phone Number
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        value={phoneNumber}
+                                        onChange={(e) => setPhoneNumber(e.target.value)}
+                                        placeholder="+353 87 123 4567"
+                                        className="w-full p-3 border border-gray-300 rounded-md focus:ring-accent focus:border-accent"
+                                    />
+                                </div>
+                                <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                                    <div className="flex">
+                                        <Lucide.Info className="w-5 h-5 text-blue-600 mr-2 flex-shrink-0" />
+                                        <div className="text-sm text-blue-800">
+                                            <p className="font-medium mb-1">Mobile-Optimized Survey</p>
+                                            <p>The survey link works best on smartphones and tablets, with GPS location capture and photo upload capabilities.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex space-x-3 mt-6">
+                                <button
+                                    onClick={() => setShowSendModal(false)}
+                                    className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleSendToPhone}
+                                    className="flex-1 py-2 px-4 bg-accent text-white rounded-md hover:bg-orange-500 flex items-center justify-center space-x-2"
+                                >
+                                    <Lucide.Send className="w-4 h-4" />
+                                    <span>Send SMS</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

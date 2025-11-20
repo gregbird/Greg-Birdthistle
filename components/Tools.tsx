@@ -401,37 +401,128 @@ const DataMineView: React.FC = () => {
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h2 className="text-3xl font-bold text-secondary">Data Mine Results</h2>
-                        <p className="text-gray-500 mt-1">For: Clonakilty Bay SAC (000091)</p>
+                        <p className="text-gray-500 mt-1">For: Rossbehy SAC/SPA (002070, 004158)</p>
                     </div>
                     <button onClick={() => setShowResults(false)} className="bg-accent text-white py-2 px-4 rounded-md hover:bg-orange-500">
                         Start New Search
                     </button>
                 </div>
                 <div className="space-y-6">
-                    {/* Results Cards */}
+                    {/* Site Overview */}
+                    <div className="bg-surface p-6 rounded-lg shadow-md">
+                        <h3 className="font-semibold text-lg text-secondary flex items-center"><Lucide.MapPin className="w-5 h-5 mr-2 text-accent"/>Site Overview</h3>
+                        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p className="text-gray-700 font-medium">SAC: Castlemaine Harbour (002070)</p>
+                                <p className="text-gray-600 mt-1">Area: 91.71 ha</p>
+                                <p className="text-gray-600">County: Kerry</p>
+                            </div>
+                            <div>
+                                <p className="text-gray-700 font-medium">SPA: Castlemaine Harbour (004158)</p>
+                                <p className="text-gray-600 mt-1">Overlapping designation</p>
+                                <p className="text-gray-600">Coastal wetland complex</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Generated Summary */}
                     <div className="bg-surface p-6 rounded-lg shadow-md">
                         <h3 className="font-semibold text-lg text-secondary flex items-center"><Lucide.Sparkles className="w-5 h-5 mr-2 text-accent"/>Generated Summary</h3>
-                        <p className="mt-2 text-sm text-gray-600">Clonakilty Bay SAC is primarily designated for its estuarine and dune habitats. Recent NPWS reports (2022) indicate the Fixed Dune habitat [2130] is in "Unfavourable" condition due to scrub encroachment and insufficient bare ground. Water quality data from the EPA shows moderate nutrient levels in the estuary, a known pressure on saltmarsh habitats.</p>
+                        <p className="mt-2 text-sm text-gray-600">Rossbehy is part of the larger Castlemaine Harbour complex, designated as both an SAC and SPA. The site is characterized by extensive sand dune systems, including embryonic shifting dunes [2110], marram dunes (white dunes) [2120], and fixed coastal dunes [2130]. The site also includes Atlantic salt meadows [1330] and mudflats [1140]. The SPA designation recognizes the importance of the area for wintering waterbirds, particularly waders and wildfowl.</p>
+                        <p className="mt-2 text-sm text-gray-600">Recent NPWS condition assessments (2019-2022) indicate that many dune habitats are in "Favourable" condition, though some areas show signs of recreational pressure and erosion. The saltmarsh habitats maintain good structure and function with typical zonation patterns present.</p>
                     </div>
+
+                    {/* Qualifying Interests */}
+                    <div className="bg-surface p-6 rounded-lg shadow-md">
+                        <h3 className="font-semibold text-lg text-secondary flex items-center"><Lucide.Leaf className="w-5 h-5 mr-2 text-accent"/>Qualifying Interests</h3>
+                        <div className="mt-3">
+                            <p className="text-sm font-medium text-gray-700 mb-2">Habitats (Annex I):</p>
+                            <div className="flex flex-wrap gap-2 mb-3">
+                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">[1140] Mudflats and sandflats</span>
+                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">[1330] Atlantic salt meadows</span>
+                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">[2110] Embryonic shifting dunes</span>
+                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">[2120] Marram dunes (white dunes)</span>
+                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">[2130] Fixed coastal dunes</span>
+                            </div>
+                            <p className="text-sm font-medium text-gray-700 mb-2 mt-4">Special Conservation Interests (Birds):</p>
+                            <div className="flex flex-wrap gap-2">
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Wigeon</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Brent Goose</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Shelduck</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Red-breasted Merganser</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Oystercatcher</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Golden Plover</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Grey Plover</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Sanderling</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Dunlin</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Bar-tailed Godwit</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Redshank</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Turnstone</span>
+                                <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Wetland and Waterbirds</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Key Documents */}
                     <div className="bg-surface p-6 rounded-lg shadow-md">
                         <h3 className="font-semibold text-lg text-secondary flex items-center"><Lucide.FileText className="w-5 h-5 mr-2 text-accent"/>Key Documents Found</h3>
                         <ul className="list-disc list-inside mt-2 text-sm text-gray-600 space-y-1">
-                           <li>NPWS (2022) - Site-Specific Conservation Objectives for Clonakilty Bay SAC [000091] - <a href="#" className="text-accent">Download</a></li>
-                           <li>EPA (2023) - Water Quality Report: Clonakilty Bay Transitional Waterbody - <a href="#" className="text-accent">Link</a></li>
-                           <li>Cork County Council (2021) - Inchydoney Beach Management Plan - <a href="#" className="text-accent">Download</a></li>
+                           <li>NPWS (2019) - Conservation Objectives for Castlemaine Harbour SAC [002070] - <a href="#" className="text-accent">Download</a></li>
+                           <li>NPWS (2021) - Conservation Objectives for Castlemaine Harbour SPA [004158] - <a href="#" className="text-accent">Download</a></li>
+                           <li>NPWS (2022) - Coastal Monitoring Project: Rossbehy Dune System Survey - <a href="#" className="text-accent">Download</a></li>
+                           <li>BirdWatch Ireland (2023) - I-WeBS Count Data: Castlemaine Harbour - <a href="#" className="text-accent">Link</a></li>
+                           <li>Kerry County Council (2020) - Rossbehy Beach Access Management Plan - <a href="#" className="text-accent">Download</a></li>
+                           <li>EPA (2023) - Water Quality Assessment: Inner Dingle Bay Coastal Waterbody - <a href="#" className="text-accent">Link</a></li>
                         </ul>
                     </div>
+
+                    {/* Conservation Status */}
+                    <div className="bg-surface p-6 rounded-lg shadow-md">
+                        <h3 className="font-semibold text-lg text-secondary flex items-center"><Lucide.ShieldCheck className="w-5 h-5 mr-2 text-accent"/>Conservation Status</h3>
+                        <div className="mt-3 space-y-2">
+                            <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                                <span className="text-sm text-gray-700">Embryonic shifting dunes [2110]</span>
+                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Favourable</span>
+                            </div>
+                            <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                                <span className="text-sm text-gray-700">Marram dunes [2120]</span>
+                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Favourable</span>
+                            </div>
+                            <div className="flex items-center justify-between p-2 bg-yellow-50 rounded">
+                                <span className="text-sm text-gray-700">Fixed dunes [2130]</span>
+                                <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Favourable (concerns)</span>
+                            </div>
+                            <div className="flex items-center justify-between p-2 bg-green-50 rounded">
+                                <span className="text-sm text-gray-700">Atlantic salt meadows [1330]</span>
+                                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Favourable</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Pressures & Threats */}
                      <div className="bg-surface p-6 rounded-lg shadow-md">
                         <h3 className="font-semibold text-lg text-secondary flex items-center"><Lucide.AlertTriangle className="w-5 h-5 mr-2 text-accent"/>Identified Pressures & Threats</h3>
                         <div className="mt-2 flex flex-wrap gap-2">
-                            <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Scrub Encroachment</span>
-                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Recreational Pressure</span>
-                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Nutrient Loading</span>
+                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Recreational Pressure (Walking/Beach Access)</span>
+                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Erosion (Natural & Human-induced)</span>
+                            <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Vehicle Access to Beach</span>
+                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Invasive Species (Sea Buckthorn)</span>
+                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Climate Change (Coastal Squeeze)</span>
+                            <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Disturbance to Birds</span>
                         </div>
                     </div>
+
+                    {/* Data Gap Analysis */}
                     <div className="bg-surface p-6 rounded-lg shadow-md">
                         <h3 className="font-semibold text-lg text-secondary flex items-center"><Lucide.SearchX className="w-5 h-5 mr-2 text-accent"/>Data Gap Analysis</h3>
-                        <p className="mt-2 text-sm text-gray-600">No recent (post-2020) dedicated surveys for wintering birds within the SPA section were found. Data on the impact of recreational trampling on dune vegetation is qualitative and lacks quantitative metrics.</p>
+                        <p className="mt-2 text-sm text-gray-600">While the site has good baseline data from NPWS surveys, the following gaps were identified:</p>
+                        <ul className="list-disc list-inside mt-2 text-sm text-gray-600 space-y-1">
+                            <li>No detailed assessment of visitor numbers and their spatial distribution across the dune system post-2020</li>
+                            <li>Limited quantitative data on the extent and rate of Sea Buckthorn spread</li>
+                            <li>Absence of recent (post-2021) detailed botanical surveys of fixed dune grassland composition</li>
+                            <li>No systematic monitoring of breeding bird populations within the dune system</li>
+                            <li>Limited data on the impact of climate change on dune erosion rates</li>
+                        </ul>
                     </div>
                 </div>
             </div>

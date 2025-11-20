@@ -259,7 +259,7 @@ const App: React.FC = () => {
       case ViewType.Settings: return currentUserRole === 'parent' ? <SettingsView /> : <PermissionDenied />;
       case ViewType.Team: return currentUserRole === 'parent' ? <TeamView team={db.team} openThirdPartyModal={() => setThirdPartyModal({show: true, link: null})}/> : <PermissionDenied />;
       case ViewType.FieldSurvey: return <FieldSurveyView projects={db.projects} teamMembers={db.team} showToast={showToast} />;
-      case ViewType.Impact: return <ImpactCalculationView />;
+      case ViewType.Impact: return <ImpactCalculationView showToast={showToast} />;
       case ViewType.MySurveys:
       case ViewType.SurveyTemplates:
       case ViewType.ProjectDetail:
