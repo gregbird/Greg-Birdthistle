@@ -13,7 +13,7 @@ declare var Chart: any;
 
 interface DashboardProps {
     setView: (view: ViewState) => void;
-    currentUserRole: 'parent' | 'child';
+    currentUserRole: 'admin' | 'assessor';
 }
 
 const DoughnutChart: React.FC<{ chartId: string, data: any, options: any }> = ({ chartId, data, options }) => {
@@ -44,7 +44,7 @@ const DoughnutChart: React.FC<{ chartId: string, data: any, options: any }> = ({
 };
 
 
-const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRole: 'parent' | 'child' }> = ({ setView, currentUserRole }) => {
+const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRole: 'admin' | 'assessor' }> = ({ setView, currentUserRole }) => {
     const [selectedWorkflow, setSelectedWorkflow] = useState<{ workflow: AssessmentWorkflow, siteName: string } | null>(null);
     const [showWorkflowModal, setShowWorkflowModal] = useState(false);
 
@@ -53,7 +53,7 @@ const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUs
         if (!data.some(item => item.SITECODE === '13')) {
             data.push({ SITECODE: '13', SITE_NAME: 'Rossbehy', Status: 'Completed', COUNTY: 'Kerry', HA: '91.71' });
         }
-        if (currentUserRole === 'child') {
+        if (currentUserRole === 'assessor') {
             return data.filter(row => row.COUNTY === 'Cork');
         }
         return data;
@@ -135,7 +135,7 @@ const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUs
                                 <th className="p-2 font-semibold">Status</th>
                                 <th className="p-2 font-semibold">County</th>
                                 <th className="p-2 font-semibold text-right">Area (ha)</th>
-                                {currentUserRole === 'parent' && <th className="p-2 font-semibold text-center">Workflow</th>}
+                                {currentUserRole === 'admin' && <th className="p-2 font-semibold text-center">Workflow</th>}
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
@@ -158,7 +158,7 @@ const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUs
                                         <td className="p-2"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColorClass(row.Status)}`}>{row.Status}</span></td>
                                         <td className="p-2">{row.COUNTY}</td>
                                         <td className="p-2 text-right">{row.HA}</td>
-                                        {currentUserRole === 'parent' && (
+                                        {currentUserRole === 'admin' && (
                                             <td className="p-2 text-center">
                                                 {workflow && (
                                                     <div className="workflow-icon flex items-center justify-center space-x-2 cursor-pointer hover:text-accent" title="View Workflow">
@@ -201,10 +201,10 @@ const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUs
     );
 };
 
-const ActionsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRole: 'parent' | 'child' }> = ({ setView, currentUserRole }) => {
+const ActionsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRole: 'admin' | 'assessor' }> = ({ setView, currentUserRole }) => {
     const actionsData = React.useMemo(() => {
         const data = parseCsv(actionsCsvData);
-        if (currentUserRole === 'child') {
+        if (currentUserRole === 'assessor') {
             return data.filter(row => row.COUNTY === 'Cork');
         }
         return data;
@@ -254,19 +254,19 @@ const ActionsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRo
     );
 };
 
-const KeyStats: React.FC<{ currentUserRole: 'parent' | 'child' }> = ({ currentUserRole }) => {
+const KeyStats: React.FC<{ currentUserRole: 'admin' | 'assessor' }> = ({ currentUserRole }) => {
     const [activeTab, setActiveTab] = React.useState('habitats');
 
-    const parentStatsData = {
+    const adminStatsData = {
         habitats: { total: 240, favourable: 190, inadequate: 40, unfavourable: 10 },
         species: { total: 180, favourable: 120, inadequate: 45, unfavourable: 15 }
     };
-    const childStatsData = {
+    const assessorStatsData = {
         habitats: { total: 12, favourable: 8, inadequate: 3, unfavourable: 1 },
         species: { total: 9, favourable: 6, inadequate: 2, unfavourable: 1 }
     };
 
-    const statsData = currentUserRole === 'parent' ? parentStatsData : childStatsData;
+    const statsData = currentUserRole === 'admin' ? adminStatsData : assessorStatsData;
     const currentStats = statsData[activeTab as keyof typeof statsData];
 
     const tabButtonClass = (tabName: string) => 
@@ -304,7 +304,7 @@ const KeyStats: React.FC<{ currentUserRole: 'parent' | 'child' }> = ({ currentUs
 const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) => {
     const [activeTab, setActiveTab] = React.useState('assessments');
 
-    if (currentUserRole === 'child') {
+    if (currentUserRole === 'assessor') {
         return <WorkflowDashboard setView={setView} />;
     }
 
@@ -337,25 +337,25 @@ const DashboardView: React.FC<DashboardProps> = ({ setView, currentUserRole }) =
         }
     };
 
-    const parentActionsChartData = {
+    const adminActionsChartData = {
         labels: ['Not Assigned', 'Pending', 'In Progress', 'Completed'],
         datasets: [{ data: [5, 3, 8, 12], backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'] }]
     };
-    const childActionsChartData = {
+    const assessorActionsChartData = {
         labels: ['Not Assigned', 'Pending', 'In Progress', 'Completed'],
         datasets: [{ data: [1, 0, 2, 1], backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'] }]
     };
-    const actionsChartData = currentUserRole === 'parent' ? parentActionsChartData : childActionsChartData;
+    const actionsChartData = currentUserRole === 'admin' ? adminActionsChartData : assessorActionsChartData;
     
-    const parentSurveysChartData = {
+    const adminSurveysChartData = {
         labels: ['Not Assigned', 'Pending', 'In Progress', 'Completed'],
         datasets: [{ data: [3, 1, 2, 8], backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'] }]
     };
-    const childSurveysChartData = {
+    const assessorSurveysChartData = {
         labels: ['Not Assigned', 'Pending', 'In Progress', 'Completed'],
         datasets: [{ data: [0, 0, 1, 1], backgroundColor: ['#E5E7EB', '#FBBF24', '#3B82F6', '#10B981'] }]
     };
-    const surveysChartData = currentUserRole === 'parent' ? parentSurveysChartData : childSurveysChartData;
+    const surveysChartData = currentUserRole === 'admin' ? adminSurveysChartData : assessorSurveysChartData;
 
     const tabButtonClass = (tabName: string) =>
         `whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${activeTab === tabName ? 'border-accent text-accent' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`;

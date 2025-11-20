@@ -49,8 +49,8 @@ function useLocalStorage<T,>(key: string, initialValue: T): [T, (value: T) => vo
 const Sidebar: React.FC<{
   setView: (view: ViewState) => void,
   openTaskTypeModal: () => void,
-  currentUserRole: 'parent' | 'child',
-  setCurrentUserRole: (role: 'parent' | 'child') => void,
+  currentUserRole: 'admin' | 'assessor',
+  setCurrentUserRole: (role: 'admin' | 'assessor') => void,
 }> = ({ setView, openTaskTypeModal, currentUserRole, setCurrentUserRole }) => {
   const menuItems = {
     Workspace: [
@@ -76,7 +76,7 @@ const Sidebar: React.FC<{
     ]
   };
 
-  const childMenuItems = {
+  const assessorMenuItems = {
     Workspace: [
       { name: 'My Tasks', icon: 'LayoutDashboard', view: ViewType.Dashboard },
       { name: 'Site Status', icon: 'CheckSquare', view: ViewType.Tasks },
@@ -87,7 +87,7 @@ const Sidebar: React.FC<{
     Reporting: menuItems.Reporting,
   };
 
-  const visibleMenuItems = currentUserRole === 'parent' ? menuItems : childMenuItems;
+  const visibleMenuItems = currentUserRole === 'admin' ? menuItems : assessorMenuItems;
 
   return (
     <aside className="w-64 bg-surface flex flex-col border-r border-gray-200">
@@ -97,7 +97,7 @@ const Sidebar: React.FC<{
       </div>
       
       <nav className="p-4 flex-1 overflow-y-auto">
-          {currentUserRole === 'parent' && (
+          {currentUserRole === 'admin' && (
             <button onClick={openTaskTypeModal} className="w-full bg-primary text-secondary py-2.5 px-4 rounded-md hover:brightness-95 flex items-center space-x-2 justify-center text-sm font-semibold mb-6">
                 <Lucide.PlusCircle className="w-5 h-5" />
                 <span>Create a Site Task</span>
@@ -121,7 +121,7 @@ const Sidebar: React.FC<{
             </div>
           ))}
            
-           {currentUserRole === 'parent' && (
+           {currentUserRole === 'admin' && (
              <div className="mt-4">
                 <h3 className="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">Configuration</h3>
                 <div className="mt-2 space-y-1">
@@ -138,11 +138,11 @@ const Sidebar: React.FC<{
       <div className="p-4 border-t border-gray-200">
           <label htmlFor="user-role-switcher" className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Demonstration View</label>
           <div className="flex rounded-md shadow-sm">
-              <button onClick={() => setCurrentUserRole('parent')} className={`w-1/2 px-2 py-1 text-xs font-medium rounded-l-md transition-colors ${currentUserRole === 'parent' ? 'bg-accent text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                  Parent (Admin)
+              <button onClick={() => setCurrentUserRole('admin')} className={`w-1/2 px-2 py-1 text-xs font-medium rounded-l-md transition-colors ${currentUserRole === 'admin' ? 'bg-accent text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                  Admin
               </button>
-              <button onClick={() => setCurrentUserRole('child')} className={`w-1/2 px-2 py-1 text-xs font-medium rounded-r-md transition-colors ${currentUserRole === 'child' ? 'bg-accent text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
-                  Child (User)
+              <button onClick={() => setCurrentUserRole('assessor')} className={`w-1/2 px-2 py-1 text-xs font-medium rounded-r-md transition-colors ${currentUserRole === 'assessor' ? 'bg-accent text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}>
+                  Assessor
               </button>
           </div>
       </div>
@@ -176,7 +176,7 @@ const PermissionDenied: React.FC = () => (
     <div className="p-4 md:p-8 text-center">
         <Lucide.Lock className="w-16 h-16 text-status-bad mx-auto mb-4" />
         <h2 className="text-3xl font-bold text-secondary">Access Denied</h2>
-        <p className="text-gray-500 mt-2">You do not have permission to view this page. Please switch to the Parent (Admin) view.</p>
+        <p className="text-gray-500 mt-2">You do not have permission to view this page. Please switch to the Admin view.</p>
     </div>
 );
 
@@ -185,7 +185,7 @@ const App: React.FC = () => {
   const [auditTrail, setAuditTrail] = useLocalStorage('dulraAuditTrail', defaultAuditTrail);
   const [viewState, setViewState] = useState<ViewState>({ view: ViewType.Dashboard });
   const [toast, setToast] = useState<ToastState>({ show: false, message: '', type: 'success' });
-  const [currentUserRole, setCurrentUserRole] = useLocalStorage<'parent' | 'child'>('dulraUserRole', 'parent');
+  const [currentUserRole, setCurrentUserRole] = useLocalStorage<'admin' | 'assessor'>('dulraUserRole', 'admin');
   const [showOnboarding, setShowOnboarding] = useLocalStorage('dulraOnboardingCompleted', false);
 
   // Modal States
@@ -243,12 +243,12 @@ const App: React.FC = () => {
   };
 
   // Filter data based on user role
-  const childUser = "Cian O'Donnell";
-  const visibleSurveys = currentUserRole === 'child'
-      ? db.surveys.filter(s => s.assignedTo?.includes(childUser))
+  const assessorUser = "Cian O'Donnell";
+  const visibleSurveys = currentUserRole === 'assessor'
+      ? db.surveys.filter(s => s.assignedTo?.includes(assessorUser))
       : db.surveys;
   const visibleProjectIds = [...new Set(visibleSurveys.map(s => s.projectId))];
-  const visibleProjects = currentUserRole === 'child'
+  const visibleProjects = currentUserRole === 'assessor'
       ? db.projects.filter(p => visibleProjectIds.includes(p.id))
       : db.projects;
 
@@ -256,10 +256,10 @@ const App: React.FC = () => {
   const renderView = () => {
     switch (viewState.view) {
       case ViewType.Dashboard: return <DashboardView setView={setView} currentUserRole={currentUserRole}/>;
-      case ViewType.Projects: return currentUserRole === 'parent' ? <ProjectsView setView={setView} /> : <PermissionDenied />;
+      case ViewType.Projects: return currentUserRole === 'admin' ? <ProjectsView setView={setView} /> : <PermissionDenied />;
       case ViewType.Tasks: return <TasksView setView={setView} currentUserRole={currentUserRole}/>;
-      case ViewType.Settings: return currentUserRole === 'parent' ? <SettingsView /> : <PermissionDenied />;
-      case ViewType.Team: return currentUserRole === 'parent' ? <TeamView team={db.team} openThirdPartyModal={() => setThirdPartyModal({show: true, link: null})}/> : <PermissionDenied />;
+      case ViewType.Settings: return currentUserRole === 'admin' ? <SettingsView /> : <PermissionDenied />;
+      case ViewType.Team: return currentUserRole === 'admin' ? <TeamView team={db.team} openThirdPartyModal={() => setThirdPartyModal({show: true, link: null})}/> : <PermissionDenied />;
       case ViewType.FieldSurvey: return <FieldSurveyView projects={db.projects} teamMembers={db.team} showToast={showToast} />;
       case ViewType.Impact: return <ImpactCalculationView showToast={showToast} />;
       case ViewType.Article17: return <Article17AssessmentView showToast={showToast} />;
@@ -291,7 +291,7 @@ const App: React.FC = () => {
       case ViewType.AssessmentDetail: return <AssessmentDetailView setView={setView} param={viewState.param}/>;
       case ViewType.ActionDetail: return <ActionDetailView setView={setView} siteCode={viewState.param?.siteCode} />;
       case ViewType.CreateAction: return <CreateActionView setView={setView} showToast={showToast} />;
-      case ViewType.AuditTrail: return currentUserRole === 'parent' ? <AuditTrailView auditTrail={auditTrail} /> : <PermissionDenied />;
+      case ViewType.AuditTrail: return currentUserRole === 'admin' ? <AuditTrailView auditTrail={auditTrail} /> : <PermissionDenied />;
       case ViewType.SurveyForm: return null; // Handled separately
       default: return <DashboardView setView={setView} currentUserRole={currentUserRole}/>;
     }
@@ -318,7 +318,7 @@ const App: React.FC = () => {
       {newSurveyModal.show && <NewSurveyModal createSurvey={createNewSurvey} closeModal={() => setNewSurveyModal({show: false, templateId: null})} />}
       {assignSurveyModal.show && <AssignSurveyModal surveyId={assignSurveyModal.surveyId!} closeModal={() => setAssignSurveyModal({show: false, surveyId: null})} showToast={showToast} />}
       {thirdPartyModal.show && <ThirdPartyModal link={thirdPartyModal.link} setLink={(link) => setThirdPartyModal({show:true, link})} closeModal={() => setThirdPartyModal({show: false, link: null})} showToast={showToast} />}
-      {!showOnboarding && currentUserRole === 'child' && <OnboardingTutorial onComplete={() => setShowOnboarding(true)} />}
+      {!showOnboarding && currentUserRole === 'assessor' && <OnboardingTutorial onComplete={() => setShowOnboarding(true)} />}
 
       <Toast toast={toast} hide={() => setToast({ ...toast, show: false })} />
     </div>

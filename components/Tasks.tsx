@@ -6,12 +6,12 @@ import { ViewType } from '../types';
 
 interface TasksViewProps {
     setView: (view: ViewState) => void;
-    currentUserRole: 'parent' | 'child';
+    currentUserRole: 'admin' | 'assessor';
 }
 
 interface TableProps {
     setView: (view: ViewState) => void;
-    currentUserRole: 'parent' | 'child';
+    currentUserRole: 'admin' | 'assessor';
 }
 
 const SiteStatusTable: React.FC<{ data: any[] }> = ({ data }) => {
@@ -73,7 +73,7 @@ const TasksView: React.FC<TasksViewProps> = ({ setView, currentUserRole }) => {
         return parseCsv(nhaConditionsCsv);
     }, [siteStatusTab]);
 
-    const siteStatusData = currentUserRole === 'parent'
+    const siteStatusData = currentUserRole === 'admin'
         ? allSiteStatusData
         : allSiteStatusData.filter(d => d.COUNTY === 'Cork');
 
