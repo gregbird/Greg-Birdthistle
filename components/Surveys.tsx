@@ -79,52 +79,9 @@ const MySurveys: React.FC<{
   projects: Project[];
   surveys: Survey[];
   setView: (view: ViewState) => void;
-}> = ({ projects, surveys, setView }) => {
-  return (
-    <div className="p-4 md:p-8">
-      <div className="flex flex-col md:flex-row justify-between md:items-center mb-6 gap-4">
-        <div>
-          <h2 className="text-3xl font-bold text-secondary">Surveys</h2>
-          <p className="text-gray-500">An overview of all your active and completed surveys.</p>
-        </div>
-        <button onClick={() => setView({ view: ViewType.SurveyTemplates })} className="bg-primary text-secondary py-2 px-4 rounded-md hover:brightness-95 flex items-center space-x-2 w-full md:w-auto justify-center">
-          <Lucide.PlusCircle className="w-5 h-5" />
-          <span>Create New Survey</span>
-        </button>
-      </div>
-      <div className="space-y-4">
-        {projects.length === 0 ? (
-          <div className="text-center py-12 bg-surface rounded-lg shadow-sm">
-            <Lucide.FolderSearch className="w-12 h-12 text-gray-300 mx-auto" />
-            <h3 className="mt-2 text-lg font-medium text-secondary">No surveys yet</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by creating your first survey.</p>
-            <button onClick={() => setView({ view: ViewType.SurveyTemplates })} className="mt-4 bg-primary text-secondary py-2 px-4 rounded-md hover:brightness-95 text-sm">Create Survey</button>
-          </div>
-        ) : projects.map(p => {
-          const projectSurveys = surveys.filter(s => s.projectId === p.id);
-          const completed = projectSurveys.filter(s => s.status === 'Completed').length;
-          const progress = projectSurveys.length > 0 ? (completed / projectSurveys.length) * 100 : 0;
-          return (
-            <div key={p.id} className="bg-surface p-5 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onClick={() => setView({ view: ViewType.ProjectDetail, param: p.id })}>
-              <div className="flex justify-between items-start">
-                <div>
-                  <h3 className="font-bold text-lg text-secondary">{p.name}</h3>
-                  <p className="text-sm text-gray-500">{p.client}</p>
-                </div>
-                <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full">{p.code}</span>
-              </div>
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-xs text-gray-500">{completed} of {projectSurveys.length} surveys completed.</p>
-                <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
-                  <div className="bg-accent h-1.5 rounded-full" style={{ width: `${progress}%` }}></div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
+  openNewSurveyModal: (templateId: string) => void;
+}> = ({ projects, surveys, setView, openNewSurveyModal }) => {
+  return <SurveyTemplates setView={setView} openNewSurveyModal={openNewSurveyModal} />;
 };
 
 const SurveyTemplates: React.FC<{ setView: (view: ViewState) => void, openNewSurveyModal: (templateId: string) => void }> = ({ setView, openNewSurveyModal }) => {
