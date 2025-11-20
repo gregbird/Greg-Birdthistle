@@ -5,6 +5,7 @@ import { ViewType } from '../types';
 import * as Lucide from 'lucide-react';
 import { generateAiReportContent } from '../services';
 import ImpactCalculationView from './ImpactCalculation';
+import IntelligentReportingView from './IntelligentReporting';
 
 
 const GisMappingView: React.FC = () => {
@@ -922,7 +923,7 @@ const ToolsView: React.FC<ToolsViewProps> = (props) => {
   switch(viewState.view) {
     case ViewType.GisMapping: return <GisMappingView />;
     case ViewType.DataMine: return <DataMineView />;
-    case ViewType.Reporting: return <ReportingView projects={projects} surveys={surveys}/>;
+    case ViewType.Reporting: return <IntelligentReportingView projects={projects} surveys={surveys}/>;
     case ViewType.Visualisation: return <VisualisationView />;
     default: return <div>Select a tool from the sidebar.</div>;
   }
