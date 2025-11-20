@@ -17,6 +17,7 @@ import ActionDetailView from './components/ActionDetail';
 import CreateActionView from './components/CreateAction';
 import FieldSurveyView from './components/FieldSurvey';
 import ImpactCalculationView from './components/ImpactCalculation';
+import Article17AssessmentView from './components/Article17Assessment';
 import AuditTrailView from './components/AuditTrail';
 import OnboardingTutorial from './components/OnboardingTutorial';
 
@@ -67,6 +68,7 @@ const Sidebar: React.FC<{
     "Field Research": [
         { name: 'Field Survey', icon: 'ClipboardList', view: ViewType.FieldSurvey },
         { name: 'Impact Calculation', icon: 'Calculator', view: ViewType.Impact },
+        { name: 'Article 17 Assessment', icon: 'FileText', view: ViewType.Article17 },
     ],
     Reporting: [
         { name: 'Intelligent Reporting', icon: 'FileText', view: ViewType.Reporting },
@@ -260,6 +262,7 @@ const App: React.FC = () => {
       case ViewType.Team: return currentUserRole === 'parent' ? <TeamView team={db.team} openThirdPartyModal={() => setThirdPartyModal({show: true, link: null})}/> : <PermissionDenied />;
       case ViewType.FieldSurvey: return <FieldSurveyView projects={db.projects} teamMembers={db.team} showToast={showToast} />;
       case ViewType.Impact: return <ImpactCalculationView showToast={showToast} />;
+      case ViewType.Article17: return <Article17AssessmentView showToast={showToast} />;
       case ViewType.MySurveys:
       case ViewType.SurveyTemplates:
       case ViewType.ProjectDetail:

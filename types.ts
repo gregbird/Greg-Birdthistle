@@ -13,6 +13,7 @@ export enum ViewType {
   FieldSurvey = 'field-survey-view',
   Team = 'team-view',
   Impact = 'impact-view',
+  Article17 = 'article17-view',
   Reporting = 'reporting-view',
   Visualisation = 'visualisation-view',
   AssessmentDetail = 'assessment-detail-view',
@@ -258,4 +259,107 @@ export interface BatchOperation {
     completedAt?: string;
     results?: any[];
     errors?: string[];
+}
+
+// Article 17 Assessment Types
+export type Article17Status = 'Favourable' | 'Unfavourable-Inadequate' | 'Unfavourable-Bad' | 'Unknown';
+export type Article17Trend = 'Increasing' | 'Stable' | 'Decreasing' | 'Unknown' | 'Improving' | 'Deteriorating';
+export type BiogeographicalRegion = 'Alpine' | 'Atlantic' | 'Black Sea' | 'Boreal' | 'Continental' | 'Macaronesian' | 'Mediterranean' | 'Pannonian' | 'Steppic';
+export type MarineRegion = 'Marine Atlantic' | 'Marine Baltic' | 'Marine Black Sea' | 'Marine Macaronesian' | 'Marine Mediterranean';
+export type ReportingPeriod = '2007-2012' | '2013-2018' | '2019-2024';
+export type AssessmentMethod = '0EQ' | '0MS' | '1' | '2XA' | '2XP' | '2GD' | '2XR' | '3XA' | '3XP' | '3GD' | '3XR' | 'MTX' | 'OTH';
+
+export interface Article17RangeParameter {
+    status: Article17Status;
+    trend: Article17Trend;
+    favourableReferenceRange: number;
+    currentRange: number;
+    surfaceArea: number;
+    shortTermTrend: Article17Trend;
+    longTermTrend?: Article17Trend;
+    reasonForChange?: string;
+}
+
+export interface Article17AreaParameter {
+    status: Article17Status;
+    trend: Article17Trend;
+    favourableReferenceArea: number;
+    currentArea: number;
+    surfaceArea: number;
+    shortTermTrend: Article17Trend;
+    longTermTrend?: Article17Trend;
+    reasonForChange?: string;
+}
+
+export interface Article17StructureParameter {
+    status: Article17Status;
+    areaInGoodCondition: number;
+    areaInPoorCondition: number;
+    percentageInGoodCondition: number;
+    trend: Article17Trend;
+    typicalSpeciesStatus?: Article17Status;
+    reasonForChange?: string;
+}
+
+export interface Article17FutureProspectsParameter {
+    status: Article17Status;
+    mainPressures: string[];
+    mainThreats: string[];
+    significantPressures: boolean;
+    longTermViability: 'Good' | 'Poor' | 'Unknown';
+}
+
+export interface Article17Assessment {
+    id: string;
+    habitatCode: string;
+    habitatName: string;
+    biogeographicalRegion: BiogeographicalRegion | MarineRegion;
+    reportingPeriod: ReportingPeriod;
+    memberState: string;
+
+    // Four parameters
+    range: Article17RangeParameter;
+    area: Article17AreaParameter;
+    structureAndFunctions: Article17StructureParameter;
+    futureProspects: Article17FutureProspectsParameter;
+
+    // Overall assessment
+    overallStatus: Article17Status;
+    overallTrend: Article17Trend;
+    assessmentMethod: AssessmentMethod;
+
+    // Target 1 contribution
+    target1Classification?: 'A=' | 'A+' | 'B1' | 'B2' | 'C' | 'D' | 'E';
+
+    // Metadata
+    createdAt: string;
+    createdBy: string;
+    lastModified: string;
+    assessmentNotes?: string;
+    dataQuality: 'Good' | 'Moderate' | 'Poor';
+
+    // Backcasting comparison
+    previousStatus?: Article17Status;
+    previousPeriod?: ReportingPeriod;
+    natureOfChange?: 'genuine' | 'non-genuine' | 'no-change' | 'unknown';
+}
+
+export interface Article17Pressure {
+    code: string;
+    name: string;
+    category: 'Agriculture' | 'Forestry' | 'Fishing' | 'Urbanisation' | 'Mining' | 'Transport' | 'Tourism' | 'Pollution' | 'Climate Change' | 'Invasive Species' | 'Other';
+    ranking: 'High' | 'Medium' | 'Low';
+    scope: 'Whole area' | 'Majority' | 'Minority' | 'Unknown';
+}
+
+export interface Article17ComplianceCheck {
+    assessmentId: string;
+    checkDate: string;
+    compliant: boolean;
+    issues: {
+        parameter: string;
+        issue: string;
+        severity: 'Error' | 'Warning' | 'Info';
+    }[];
+    recommendations: string[];
 }

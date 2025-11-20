@@ -239,6 +239,14 @@ export const createStandardAssessmentWorkflow = (
                 dependencies: ['field-2', 'field-3']
             },
             {
+                id: 'field-4a',
+                name: 'Article 17 Assessment',
+                description: 'Complete 4-parameter Article 17 assessment (Range, Area, Structure & Functions, Future Prospects)',
+                phase: 'field_research',
+                status: 'not_started',
+                dependencies: ['field-4']
+            },
+            {
                 id: 'field-5',
                 name: 'Photo Documentation',
                 description: 'Organize and annotate field photographs',
@@ -253,7 +261,7 @@ export const createStandardAssessmentWorkflow = (
                 description: 'Validate all collected data for completeness and accuracy',
                 phase: 'reporting',
                 status: 'not_started',
-                dependencies: ['field-4', 'field-5']
+                dependencies: ['field-4a', 'field-5']
             },
             {
                 id: 'report-2',
