@@ -254,7 +254,7 @@ const App: React.FC = () => {
   const renderView = () => {
     switch (viewState.view) {
       case ViewType.Dashboard: return <DashboardView setView={setView} currentUserRole={currentUserRole}/>;
-      case ViewType.Projects: return currentUserRole === 'parent' ? <ProjectsView /> : <PermissionDenied />;
+      case ViewType.Projects: return currentUserRole === 'parent' ? <ProjectsView setView={setView} /> : <PermissionDenied />;
       case ViewType.Tasks: return <TasksView setView={setView} currentUserRole={currentUserRole}/>;
       case ViewType.Settings: return currentUserRole === 'parent' ? <SettingsView /> : <PermissionDenied />;
       case ViewType.Team: return currentUserRole === 'parent' ? <TeamView team={db.team} openThirdPartyModal={() => setThirdPartyModal({show: true, link: null})}/> : <PermissionDenied />;

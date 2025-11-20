@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as Lucide from 'lucide-react';
-import type { ViewState } from '../types';
+import type { ViewState, AssessmentWorkflow } from '../types';
 import { ViewType } from '../types';
 import { assessmentsCsvData, actionsCsvData } from '../constants';
 import { parseCsv, getStatusColorClass, registerChartPlugins } from '../services';
 import WorkflowDashboard from './WorkflowDashboard';
+import { createStandardAssessmentWorkflow, getWorkflowProgress, getPhaseProgress } from '../workflowUtils';
+import WorkflowVisualization from './WorkflowVisualization';
 
 // Declare Chart.js from CDN
 declare var Chart: any;
@@ -43,6 +45,9 @@ const DoughnutChart: React.FC<{ chartId: string, data: any, options: any }> = ({
 
 
 const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUserRole: 'parent' | 'child' }> = ({ setView, currentUserRole }) => {
+    const [selectedWorkflow, setSelectedWorkflow] = useState<{ workflow: AssessmentWorkflow, siteName: string } | null>(null);
+    const [showWorkflowModal, setShowWorkflowModal] = useState(false);
+
     const assessmentsData = React.useMemo(() => {
         let data = parseCsv(assessmentsCsvData);
         if (!data.some(item => item.SITECODE === '13')) {
@@ -58,45 +63,141 @@ const AssessmentsTable: React.FC<{ setView: (view: ViewState) => void; currentUs
         return ['13', '91', '32', '51', '37'].includes(siteCode);
     };
 
+    const getWorkflowForSite = (siteCode: string, siteName: string, status: string): AssessmentWorkflow | null => {
+        if (!hasAssessmentDetail(siteCode)) return null;
+
+        const now = new Date();
+        const dueDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+        const workflow = createStandardAssessmentWorkflow(
+            `assess-${siteCode}`,
+            siteCode,
+            siteName,
+            'Team Member',
+            'Dr. Sarah Murphy',
+            dueDate.toISOString()
+        );
+
+        // Update workflow based on status
+        let progress = 0;
+        if (status === 'In Progress') progress = Math.floor(Math.random() * 70) + 20;
+        else if (status === 'Completed') progress = 100;
+        else if (status === 'Not Started') progress = 0;
+        else progress = Math.floor(Math.random() * 50);
+
+        const targetCompletedSteps = Math.floor((progress / 100) * workflow.steps.length);
+        workflow.steps = workflow.steps.map((step, idx) => ({
+            ...step,
+            status: idx < targetCompletedSteps ? 'completed' as const :
+                    idx === targetCompletedSteps ? 'in_progress' as const :
+                    'not_started' as const
+        }));
+
+        if (progress === 100) {
+            workflow.status = 'completed';
+            workflow.currentPhase = 'reporting';
+        } else if (targetCompletedSteps >= 10) {
+            workflow.status = 'in_progress';
+            workflow.currentPhase = 'reporting';
+        } else if (targetCompletedSteps >= 5) {
+            workflow.status = 'in_progress';
+            workflow.currentPhase = 'field_research';
+        } else {
+            workflow.status = 'in_progress';
+            workflow.currentPhase = 'desk_research';
+        }
+
+        return workflow;
+    };
+
+    const handleRowClick = (row: any, e: React.MouseEvent) => {
+        // Check if clicking on workflow icon
+        if ((e.target as HTMLElement).closest('.workflow-icon')) {
+            e.stopPropagation();
+            const workflow = getWorkflowForSite(row.SITECODE, row.SITE_NAME, row.Status);
+            if (workflow) {
+                setSelectedWorkflow({ workflow, siteName: row.SITE_NAME });
+                setShowWorkflowModal(true);
+            }
+        } else if (hasAssessmentDetail(row.SITECODE)) {
+            setView({ view: ViewType.AssessmentDetail, param: { siteCode: row.SITECODE } });
+        }
+    };
+
     return (
-        <div className="bg-surface p-6 rounded-lg shadow-md">
-            <div className="h-[calc(100vh-18rem)] overflow-y-auto pr-2">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 sticky top-0">
-                        <tr>
-                            <th className="p-2 font-semibold">Site Code</th>
-                            <th className="p-2 font-semibold">Site Name</th>
-                            <th className="p-2 font-semibold">Status</th>
-                            <th className="p-2 font-semibold">County</th>
-                            <th className="p-2 font-semibold text-right">Area (ha)</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                        {assessmentsData.map((row, index) => (
-                            <tr
-                                key={index}
-                                className={
-                                    hasAssessmentDetail(row.SITECODE)
-                                    ? "cursor-pointer hover:bg-blue-50"
-                                    : "hover:bg-gray-50"
-                                }
-                                onClick={() => {
-                                    if (hasAssessmentDetail(row.SITECODE)) {
-                                        setView({ view: ViewType.AssessmentDetail, param: { siteCode: row.SITECODE } });
-                                    }
-                                }}
-                            >
-                                <td className="p-2">{row.SITECODE}</td>
-                                <td className="p-2 font-medium text-secondary">{row.SITE_NAME}</td>
-                                <td className="p-2"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColorClass(row.Status)}`}>{row.Status}</span></td>
-                                <td className="p-2">{row.COUNTY}</td>
-                                <td className="p-2 text-right">{row.HA}</td>
+        <>
+            <div className="bg-surface p-6 rounded-lg shadow-md">
+                <div className="h-[calc(100vh-18rem)] overflow-y-auto pr-2">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th className="p-2 font-semibold">Site Code</th>
+                                <th className="p-2 font-semibold">Site Name</th>
+                                <th className="p-2 font-semibold">Status</th>
+                                <th className="p-2 font-semibold">County</th>
+                                <th className="p-2 font-semibold text-right">Area (ha)</th>
+                                {currentUserRole === 'parent' && <th className="p-2 font-semibold text-center">Workflow</th>}
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200">
+                            {assessmentsData.map((row, index) => {
+                                const workflow = hasAssessmentDetail(row.SITECODE) ? getWorkflowForSite(row.SITECODE, row.SITE_NAME, row.Status) : null;
+                                const progress = workflow ? getWorkflowProgress(workflow) : 0;
+
+                                return (
+                                    <tr
+                                        key={index}
+                                        className={
+                                            hasAssessmentDetail(row.SITECODE)
+                                            ? "cursor-pointer hover:bg-blue-50"
+                                            : "hover:bg-gray-50"
+                                        }
+                                        onClick={(e) => handleRowClick(row, e)}
+                                    >
+                                        <td className="p-2">{row.SITECODE}</td>
+                                        <td className="p-2 font-medium text-secondary">{row.SITE_NAME}</td>
+                                        <td className="p-2"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getStatusColorClass(row.Status)}`}>{row.Status}</span></td>
+                                        <td className="p-2">{row.COUNTY}</td>
+                                        <td className="p-2 text-right">{row.HA}</td>
+                                        {currentUserRole === 'parent' && (
+                                            <td className="p-2 text-center">
+                                                {workflow && (
+                                                    <div className="workflow-icon flex items-center justify-center space-x-2 cursor-pointer hover:text-accent" title="View Workflow">
+                                                        <Lucide.GitBranch className="w-4 h-4" />
+                                                        <span className="text-xs font-medium">{progress}%</span>
+                                                    </div>
+                                                )}
+                                            </td>
+                                        )}
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+
+            {/* Workflow Modal */}
+            {showWorkflowModal && selectedWorkflow && (
+                <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 p-4" onClick={() => setShowWorkflowModal(false)}>
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                        <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between z-10">
+                            <div>
+                                <h3 className="text-2xl font-bold text-secondary">{selectedWorkflow.siteName} Workflow</h3>
+                                <p className="text-sm text-gray-600 mt-1">
+                                    Site Code: {selectedWorkflow.workflow.siteCode} • Progress: {getWorkflowProgress(selectedWorkflow.workflow)}%
+                                </p>
+                            </div>
+                            <button onClick={() => setShowWorkflowModal(false)} className="text-gray-500 hover:text-gray-700">
+                                <Lucide.X className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <div className="p-6">
+                            <WorkflowVisualization workflow={selectedWorkflow.workflow} />
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 
