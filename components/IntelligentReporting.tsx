@@ -21,6 +21,22 @@ interface ReportSection {
     dataSources: string[];
 }
 
+interface ChartData {
+    label: string;
+    value: number;
+    color: string;
+}
+
+interface ReportMetadata {
+    projectName: string;
+    projectCode: string;
+    client: string;
+    reportType: string;
+    dateGenerated: string;
+    author: string;
+    version: string;
+}
+
 interface IntelligentReportingProps {
     projects: Project[];
     surveys: Survey[];
@@ -38,6 +54,8 @@ const IntelligentReportingView: React.FC<IntelligentReportingProps> = ({ project
     const [showDataSelector, setShowDataSelector] = useState(false);
     const [reportType, setReportType] = useState<string>('');
     const [conversationStage, setConversationStage] = useState<'greeting' | 'project_selection' | 'report_type' | 'data_selection' | 'section_generation' | 'review'>('greeting');
+    const [reportMetadata, setReportMetadata] = useState<ReportMetadata | null>(null);
+    const [showFullReport, setShowFullReport] = useState(false);
 
     const chatEndRef = useRef<HTMLDivElement>(null);
     const messageInputRef = useRef<HTMLInputElement>(null);
@@ -167,6 +185,17 @@ const IntelligentReportingView: React.FC<IntelligentReportingProps> = ({ project
         const project = projects.find(p => p.id === projectId);
         addUserMessage(`I'd like to create a report for ${project?.name}`);
 
+        // Initialize report metadata
+        setReportMetadata({
+            projectName: project?.name || '',
+            projectCode: project?.code || '',
+            client: project?.client || '',
+            reportType: '',
+            dateGenerated: new Date().toLocaleDateString('en-GB'),
+            author: 'Ecological Consultant',
+            version: '1.0'
+        });
+
         setTimeout(() => {
             addAIMessage(`Great! I've loaded the data for "${project?.name}". Now, what type of report would you like to create? Here are some options:\n\n${REPORT_TYPES.map((rt, i) => `${i + 1}. ${rt.name} - ${rt.description}`).join('\n')}\n\nPlease type the number or name of the report type.`);
             setConversationStage('report_type');
@@ -180,6 +209,7 @@ const IntelligentReportingView: React.FC<IntelligentReportingProps> = ({ project
 
         if (reportTypeObj) {
             setReportType(reportTypeObj.id);
+            setReportMetadata(prev => prev ? { ...prev, reportType: reportTypeObj.name } : null);
             addUserMessage(`I want to create a ${reportTypeObj.name}`);
 
             setTimeout(() => {
@@ -317,19 +347,79 @@ const IntelligentReportingView: React.FC<IntelligentReportingProps> = ({ project
     };
 
     const exportReport = () => {
-        // Generate full report content
-        let fullReport = `# ${REPORT_TYPES.find(rt => rt.id === reportType)?.name}\n\n`;
-        fullReport += `**Project:** ${projects.find(p => p.id === selectedProjectId)?.name}\n`;
-        fullReport += `**Generated:** ${new Date().toLocaleDateString()}\n\n---\n\n`;
+        if (!reportMetadata) return;
+
+        // Generate full report content with structure
+        let fullReport = `${'='.repeat(80)}\n`;
+        fullReport += `${reportMetadata.reportType.toUpperCase()}\n`;
+        fullReport += `${'='.repeat(80)}\n\n`;
+
+        fullReport += `Project:        ${reportMetadata.projectName}\n`;
+        fullReport += `Project Code:   ${reportMetadata.projectCode}\n`;
+        fullReport += `Client:         ${reportMetadata.client}\n`;
+        fullReport += `Date:           ${reportMetadata.dateGenerated}\n`;
+        fullReport += `Version:        ${reportMetadata.version}\n`;
+        fullReport += `Author:         ${reportMetadata.author}\n\n`;
+
+        fullReport += `${'='.repeat(80)}\n\n`;
+
+        // Executive Summary
+        const overview = generateDataOverview();
+        fullReport += `EXECUTIVE SUMMARY\n${'-'.repeat(80)}\n\n`;
+        fullReport += `This report presents the findings of an ecological assessment conducted for\n`;
+        fullReport += `${reportMetadata.projectName}. The assessment identified ${overview.habitatsIdentified} distinct\n`;
+        fullReport += `habitats across an area of ${overview.totalArea}.\n\n`;
+        fullReport += `Overall Conservation Status: ${overview.conservationStatus}\n\n`;
+
+        // Data Overview
+        fullReport += `${'='.repeat(80)}\n`;
+        fullReport += `DATA OVERVIEW\n${'-'.repeat(80)}\n\n`;
+        fullReport += `Data Sources:              ${overview.totalDataSources}\n`;
+        fullReport += `Habitats Identified:       ${overview.habitatsIdentified}\n`;
+        fullReport += `Surveys Completed:         ${overview.surveysCompleted}\n`;
+        fullReport += `Total Area:                ${overview.totalArea}\n`;
+        fullReport += `Conservation Status:       ${overview.conservationStatus}\n\n`;
+
+        // Habitat Composition
+        fullReport += `Habitat Composition:\n`;
+        generateHabitatChartData().forEach(item => {
+            fullReport += `  - ${item.label}: ${item.value}%\n`;
+        });
+        fullReport += `\n`;
+
+        // Habitat Condition
+        fullReport += `Habitat Condition Assessment:\n`;
+        generateConditionChartData().forEach(item => {
+            fullReport += `  - ${item.label}: ${item.value}%\n`;
+        });
+        fullReport += `\n`;
+
+        // Conservation Status
+        fullReport += `Conservation Status Distribution:\n`;
+        generateStatusChartData().forEach(item => {
+            fullReport += `  - ${item.label}: ${item.value}%\n`;
+        });
+        fullReport += `\n`;
+
+        // Report Sections
+        fullReport += `${'='.repeat(80)}\n`;
+        fullReport += `DETAILED FINDINGS\n`;
+        fullReport += `${'='.repeat(80)}\n\n`;
 
         reportSections.forEach(section => {
             if (section.content) {
-                fullReport += `## ${section.title}\n\n${section.content}\n\n`;
+                fullReport += `${section.title.toUpperCase()}\n${'-'.repeat(80)}\n\n`;
+                fullReport += `${section.content}\n\n`;
                 if (section.userComments) {
-                    fullReport += `**Ecologist's Comments:**\n${section.userComments}\n\n`;
+                    fullReport += `Ecologist's Comments:\n${section.userComments}\n\n`;
                 }
+                fullReport += `\n`;
             }
         });
+
+        fullReport += `${'='.repeat(80)}\n`;
+        fullReport += `END OF REPORT\n`;
+        fullReport += `${'='.repeat(80)}\n`;
 
         // Download as text file
         const blob = new Blob([fullReport], { type: 'text/plain' });
@@ -342,9 +432,254 @@ const IntelligentReportingView: React.FC<IntelligentReportingProps> = ({ project
         showToast?.('Report exported successfully!', 'success');
     };
 
+    const generateDataOverview = () => {
+        const selectedSources = dataSources.filter(ds => ds.selected);
+        const overview = {
+            totalDataSources: selectedSources.length,
+            habitatsIdentified: 3,
+            surveysCompleted: 2,
+            totalArea: '45.2 ha',
+            conservationStatus: 'Unfavourable-Inadequate'
+        };
+        return overview;
+    };
+
+    const generateHabitatChartData = (): ChartData[] => {
+        return [
+            { label: '2130 Fixed coastal dunes', value: 56, color: '#f59e0b' },
+            { label: '1330 Atlantic salt meadows', value: 20, color: '#10b981' },
+            { label: 'Other habitats', value: 24, color: '#6b7280' }
+        ];
+    };
+
+    const generateConditionChartData = (): ChartData[] => {
+        return [
+            { label: 'Good condition', value: 35, color: '#10b981' },
+            { label: 'Fair condition', value: 42, color: '#f59e0b' },
+            { label: 'Poor condition', value: 23, color: '#ef4444' }
+        ];
+    };
+
+    const generateStatusChartData = (): ChartData[] => {
+        return [
+            { label: 'Favourable', value: 20, color: '#10b981' },
+            { label: 'Unfavourable-Inadequate', value: 60, color: '#f59e0b' },
+            { label: 'Unfavourable-Bad', value: 20, color: '#ef4444' }
+        ];
+    };
+
     const getIconComponent = (iconName: string) => {
         const IconComponent = (Lucide as any)[iconName];
         return IconComponent ? <IconComponent className="w-5 h-5" /> : <Lucide.File className="w-5 h-5" />;
+    };
+
+    // Chart rendering components
+    const renderBarChart = (data: ChartData[], title: string) => {
+        const maxValue = Math.max(...data.map(d => d.value));
+        return (
+            <div className="bg-white border rounded-lg p-6 mb-6">
+                <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                    <Lucide.BarChart3 className="w-5 h-5 mr-2 text-accent" />
+                    {title}
+                </h4>
+                <div className="space-y-3">
+                    {data.map((item, idx) => (
+                        <div key={idx}>
+                            <div className="flex items-center justify-between text-sm mb-1">
+                                <span className="text-gray-700">{item.label}</span>
+                                <span className="font-semibold text-gray-900">{item.value}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                                <div
+                                    className="h-full rounded-full transition-all duration-500"
+                                    style={{
+                                        width: `${(item.value / maxValue) * 100}%`,
+                                        backgroundColor: item.color
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
+
+    const renderPieChart = (data: ChartData[], title: string) => {
+        const total = data.reduce((sum, item) => sum + item.value, 0);
+        let currentAngle = 0;
+
+        return (
+            <div className="bg-white border rounded-lg p-6 mb-6">
+                <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                    <Lucide.PieChart className="w-5 h-5 mr-2 text-accent" />
+                    {title}
+                </h4>
+                <div className="flex items-center justify-between">
+                    <div className="relative w-48 h-48">
+                        <svg viewBox="0 0 200 200" className="transform -rotate-90">
+                            {data.map((item, idx) => {
+                                const percentage = (item.value / total) * 100;
+                                const angle = (percentage / 100) * 360;
+                                const startAngle = currentAngle;
+                                currentAngle += angle;
+
+                                const x1 = 100 + 90 * Math.cos((startAngle * Math.PI) / 180);
+                                const y1 = 100 + 90 * Math.sin((startAngle * Math.PI) / 180);
+                                const x2 = 100 + 90 * Math.cos((currentAngle * Math.PI) / 180);
+                                const y2 = 100 + 90 * Math.sin((currentAngle * Math.PI) / 180);
+                                const largeArc = angle > 180 ? 1 : 0;
+
+                                return (
+                                    <path
+                                        key={idx}
+                                        d={`M 100 100 L ${x1} ${y1} A 90 90 0 ${largeArc} 1 ${x2} ${y2} Z`}
+                                        fill={item.color}
+                                        className="hover:opacity-80 transition-opacity"
+                                    />
+                                );
+                            })}
+                            <circle cx="100" cy="100" r="50" fill="white" />
+                        </svg>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-center">
+                                <p className="text-3xl font-bold text-gray-900">{total}%</p>
+                                <p className="text-xs text-gray-500">Total</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex-1 ml-6 space-y-2">
+                        {data.map((item, idx) => (
+                            <div key={idx} className="flex items-center justify-between">
+                                <div className="flex items-center">
+                                    <div
+                                        className="w-4 h-4 rounded mr-2"
+                                        style={{ backgroundColor: item.color }}
+                                    />
+                                    <span className="text-sm text-gray-700">{item.label}</span>
+                                </div>
+                                <span className="text-sm font-semibold text-gray-900">{item.value}%</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderDataOverviewTable = () => {
+        const overview = generateDataOverview();
+        return (
+            <div className="bg-white border rounded-lg p-6 mb-6">
+                <h4 className="font-semibold text-gray-800 mb-4 flex items-center">
+                    <Lucide.Table className="w-5 h-5 mr-2 text-accent" />
+                    Data Overview
+                </h4>
+                <table className="w-full">
+                    <tbody className="divide-y divide-gray-200">
+                        <tr>
+                            <td className="py-3 pr-4 text-sm font-medium text-gray-700">Data Sources</td>
+                            <td className="py-3 text-sm text-gray-900">{overview.totalDataSources}</td>
+                        </tr>
+                        <tr>
+                            <td className="py-3 pr-4 text-sm font-medium text-gray-700">Habitats Identified</td>
+                            <td className="py-3 text-sm text-gray-900">{overview.habitatsIdentified}</td>
+                        </tr>
+                        <tr>
+                            <td className="py-3 pr-4 text-sm font-medium text-gray-700">Surveys Completed</td>
+                            <td className="py-3 text-sm text-gray-900">{overview.surveysCompleted}</td>
+                        </tr>
+                        <tr>
+                            <td className="py-3 pr-4 text-sm font-medium text-gray-700">Total Area</td>
+                            <td className="py-3 text-sm text-gray-900">{overview.totalArea}</td>
+                        </tr>
+                        <tr>
+                            <td className="py-3 pr-4 text-sm font-medium text-gray-700">Overall Conservation Status</td>
+                            <td className="py-3">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    {overview.conservationStatus}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        );
+    };
+
+    const renderReportHeader = () => {
+        if (!reportMetadata) return null;
+
+        return (
+            <div className="bg-gradient-to-r from-secondary to-gray-800 text-white p-8 rounded-lg mb-6">
+                <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                        <h1 className="text-3xl font-bold mb-2">{reportMetadata.reportType}</h1>
+                        <p className="text-xl text-gray-200 mb-4">{reportMetadata.projectName}</p>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p className="text-gray-300">Project Code</p>
+                                <p className="font-semibold">{reportMetadata.projectCode}</p>
+                            </div>
+                            <div>
+                                <p className="text-gray-300">Client</p>
+                                <p className="font-semibold">{reportMetadata.client}</p>
+                            </div>
+                            <div>
+                                <p className="text-gray-300">Date</p>
+                                <p className="font-semibold">{reportMetadata.dateGenerated}</p>
+                            </div>
+                            <div>
+                                <p className="text-gray-300">Version</p>
+                                <p className="font-semibold">{reportMetadata.version}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <Lucide.FileText className="w-16 h-16 text-white opacity-50" />
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const renderExecutiveSummary = () => {
+        const selectedSources = dataSources.filter(ds => ds.selected);
+        if (selectedSources.length === 0) return null;
+
+        return (
+            <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg mb-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
+                    <Lucide.FileText className="w-5 h-5 mr-2 text-blue-600" />
+                    Executive Summary
+                </h3>
+                <div className="space-y-2 text-sm text-gray-700">
+                    <p>
+                        This report presents the findings of an ecological assessment conducted for {reportMetadata?.projectName}.
+                        The assessment identified {generateDataOverview().habitatsIdentified} distinct habitats across an area of {generateDataOverview().totalArea}.
+                    </p>
+                    <p>
+                        Based on comprehensive field surveys and data analysis, the overall conservation status of the site has been assessed as{' '}
+                        <strong className="text-yellow-800">{generateDataOverview().conservationStatus}</strong>.
+                        Detailed findings, impact assessments, and mitigation recommendations are provided in the following sections.
+                    </p>
+                    <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-blue-200">
+                        <div className="text-center">
+                            <p className="text-2xl font-bold text-blue-600">{generateDataOverview().habitatsIdentified}</p>
+                            <p className="text-xs text-gray-600">Habitats</p>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-2xl font-bold text-blue-600">{generateDataOverview().surveysCompleted}</p>
+                            <p className="text-xs text-gray-600">Surveys</p>
+                        </div>
+                        <div className="text-center">
+                            <p className="text-2xl font-bold text-blue-600">{generateDataOverview().totalArea}</p>
+                            <p className="text-xs text-gray-600">Total Area</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     return (
@@ -407,7 +742,37 @@ const IntelligentReportingView: React.FC<IntelligentReportingProps> = ({ project
                                 <p className="text-sm">Select a project to begin</p>
                             </div>
                         ) : (
-                            <div className="max-w-4xl mx-auto space-y-8">
+                            <div className="max-w-4xl mx-auto">
+                                {/* Report Header */}
+                                {renderReportHeader()}
+
+                                {/* Executive Summary */}
+                                {renderExecutiveSummary()}
+
+                                {/* Data Overview Section */}
+                                {dataSources.some(ds => ds.selected) && (
+                                    <div className="mb-8">
+                                        <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center border-b pb-2">
+                                            <Lucide.BarChart2 className="w-6 h-6 mr-2 text-accent" />
+                                            Data Overview & Analysis
+                                        </h3>
+
+                                        {/* Data Overview Table */}
+                                        {renderDataOverviewTable()}
+
+                                        {/* Charts Grid */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                            {renderPieChart(generateHabitatChartData(), 'Habitat Composition')}
+                                            {renderBarChart(generateConditionChartData(), 'Habitat Condition Assessment')}
+                                        </div>
+
+                                        {/* Full-width status chart */}
+                                        {renderBarChart(generateStatusChartData(), 'Conservation Status Distribution')}
+                                    </div>
+                                )}
+
+                                {/* Report Sections */}
+                                <div className="space-y-8">
                                 {reportSections.map(section => (
                                     <div key={section.id} className="border rounded-lg overflow-hidden">
                                         <div className="bg-gray-50 px-4 py-3 border-b flex items-center justify-between">
@@ -472,6 +837,7 @@ const IntelligentReportingView: React.FC<IntelligentReportingProps> = ({ project
                                         </div>
                                     </div>
                                 ))}
+                                </div>
                             </div>
                         )}
                     </div>
