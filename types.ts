@@ -11,6 +11,7 @@ export enum ViewType {
   Settings = 'settings-view',
   DataMine = 'datamine-view',
   FieldSurvey = 'field-survey-view',
+  RelevesSurvey = 'releves-survey-view',
   Team = 'team-view',
   Impact = 'impact-view',
   Article17 = 'article17-view',
